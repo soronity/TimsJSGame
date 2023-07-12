@@ -1,6 +1,12 @@
 // Get the canvas element
-var canvas = document.getElementById("gameCanvas");
-var ctx = canvas.getContext("2d");
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const gravity = 0.5;
+
+// Load the background image
+const backgroundImage = new Image();
+backgroundImage.src = "path/to/your/background.png";
+
 
 // Resize the canvas to the size of the screen
 function resizeCanvas() {
@@ -24,7 +30,8 @@ var player = {
     velocityX: 0, // Set initial horizontal velocity to 0
 };
 
-const gravity = 0.5;
+
+
 
 // Update game logic
 function update() {
@@ -66,8 +73,8 @@ function update() {
 
 // Function to draw the player
 function draw() {
-    // Clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Draw the background image
+    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
     // Draw the player
     ctx.fillStyle = player.color;
@@ -77,7 +84,6 @@ function draw() {
 
 // Handle key presses
 document.addEventListener("keydown", function (event) {
-    // Handle key presses here (e.g., move the player)
 
     if (event.code == "KeyA") {
         player.velocityX = -10; // Set negative horizontal velocity to move left
@@ -98,10 +104,18 @@ document.addEventListener("keydown", function (event) {
 
 // Handle key releases
 document.addEventListener("keyup", function (event) {
-    if (event.code == "KeyA" || event.code == "KeyD") {
-        player.velocityX = 0; // Set horizontal velocity to 0 when the key is released
+    if (event.code == "KeyA") {
+        player.velocityX = 0; 
+    }
+    else if (event.code == "KeyD") {
+        player.velocityX = 0; 
     }
 });
 
-// Start the game loop
-setInterval(update, 16); // 60 frames per second (approx.)
+function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+requestAnimationFrame(gameLoop);
