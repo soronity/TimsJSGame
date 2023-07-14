@@ -5,8 +5,7 @@ const gravity = 0.5;
 
 // Load the background image
 const backgroundImage = new Image();
-backgroundImage.src = "path/to/your/background.png";
-
+backgroundImage.src = "img/5.png";
 
 // Resize the canvas to the size of the screen
 function resizeCanvas() {
@@ -20,102 +19,118 @@ window.addEventListener("resize", resizeCanvas);
 // Call the resizeCanvas function once on page load
 resizeCanvas();
 
-var player = {
-    x: 50, 
-    y: 50, 
-    width: 50,
-    height: 50, 
-    color: "blue", 
-    velocityY: 0, 
-    velocityX: 0, // Set initial horizontal velocity to 0
-};
-
-
-
-
-// Update game logic
-function update() {
-
-    // Update the player's vertical velocity by adding gravity
-    player.velocityY += gravity;
-
-    // Update the player's y position by adding the vertical velocity
-    player.y += player.velocityY;
-
-    // If the player hits the bottom of the canvas, stop them
-    if (player.y + player.height > canvas.height) {
-        player.y = canvas.height - player.height;
-        player.velocityY = 0;
+class Player {
+    constructor(x, y, width, height, color) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.color = color;
+        this.velocityY = 0;
+        this.velocityX = 0;
     }
 
-    // If the player hits the top of the canvas, stop them
-    if (player.y < 0) {
-        player.y = 0;
-        player.velocityY = 0;
+    updatePosition() {
+        this.velocityY += gravity;
+
+        this.y += this.velocityY;
+
+        if (this.y + this.height > canvas.height) {
+            this.y = canvas.height - this.height;
+            this.velocityY = 0;
+        }
+
+        if (this.y < 0) {
+            this.y = 0;
+            this.velocityY = 0;
+        }
+
+        this.x += this.velocityX;
+
+        if (this.x + this.width > canvas.width) {
+            this.x = canvas.width - this.width;
+        }
+
+        if (this.x < 0) {
+            this.x = 0;
+        }
+
+        this.draw();
     }
 
-    // Update the player's x position by adding the horizontal velocity
-    player.x += player.velocityX;
-
-    // If the player hits the right of the canvas, stop them
-    if (player.x + player.width > canvas.width) {
-        player.x = canvas.width - player.width;
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
     }
-
-    // If the player hits the left of the canvas, stop them
-    if (player.x < 0) {
-        player.x = 0;
-    }
-
-    // Draw the player on the canvas
-    draw();
 }
 
-// Function to draw the player
+const player = new Player(50, 50, 50, 50, "blue");
+
+const keys = {
+    d: {
+        pressed: false,
+    },
+    a: {
+        pressed: false,
+    },
+};
+
+function animate() {
+    player.updatePosition();
+
+    // Handle key presses
+    if (keys.a.pressed) {
+        player.velocityX = -5; // Set negative horizontal velocity to move left
+    } else if (keys.d.pressed) {
+        player.velocityX = 5; // Set positive horizontal velocity to move right
+    } else {
+        player.velocityX = 0;
+    }
+}
+
 function draw() {
+    // Clear the entire canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     // Draw the background image
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
     // Draw the player
-    ctx.fillStyle = player.color;
-    ctx.fillRect(player.x, player.y, player.width, player.height);
+    player.draw();
 }
 
-
-// Handle key presses
+// Eventlistener for key presses
 document.addEventListener("keydown", function (event) {
-
-    if (event.code == "KeyA") {
-        player.velocityX = -10; // Set negative horizontal velocity to move left
+    if (event.code === "KeyA") {
+        keys.a.pressed = true;
+    } else if (event.code === "KeyD") {
+        keys.d.pressed = true;
     }
 
-    if (event.code == "KeyD") {
-        player.velocityX = 10; // Set positive horizontal velocity to move right
-    }
-
-    //Jump with the space bar
-    if (event.code == "Space") {
+    // Jump with the space bar
+    if (event.code === "Space") {
         // Only jump if the player is on the ground or has a slight tolerance
         if (player.y + player.height >= canvas.height - 1) {
-            player.velocityY = -20; // Set the player's jump height to 10 pixels per frame
+            player.velocityY = -20; // Set the player's jump height
         }
     }
 });
 
-// Handle key releases
+// Eventlistener for key releases
 document.addEventListener("keyup", function (event) {
-    if (event.code == "KeyA") {
-        player.velocityX = 0; 
-    }
-    else if (event.code == "KeyD") {
-        player.velocityX = 0; 
+    if (event.code === "KeyA") {
+        keys.a.pressed = false;
+    } else if (event.code === "KeyD") {
+        keys.d.pressed = false;
     }
 });
 
 function gameLoop() {
-    update();
+    animate();
     draw();
+    // Call the gameLoop function on the next frame
     requestAnimationFrame(gameLoop);
 }
 
+// Start the continuous game loop
 requestAnimationFrame(gameLoop);
