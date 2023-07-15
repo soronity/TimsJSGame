@@ -1,40 +1,22 @@
 // Get the canvas element
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+
 const gravity = 0.5;
 
+canvas.width = 1024;
+canvas.height = 576;
 
-// const floorCollisions2DArray = [];
-// for (let i = 0; i < floorCollisions.length; i += 30) {
-//     floorCollisions2DArray.push(floorCollisions.slice(i, i + 30));
-// }
+const collisionBlocks = initializeCollisionBlocks();
 
-// for (let i = 0; i < floorCollisions2DArray.length; i++) {
-//     for (let j = 0; j < floorCollisions2DArray[i].length; j++) {
-//       // If the element has a value of 202, create a new Block object
-//       if (floorCollisions2DArray[i][j] === 202) {};
-
-// Load the background image
 const backgroundImage = new Sprite({
     position: {
         x: 0,
         y: 0,
     },
-    imageSrc: "img/5.png",
+    imageSrc: "img/test.png",
+    scale: 2,
 });
-
-
-// Resize the canvas to the size of the screen
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-
-// Call the resizeCanvas function when the window is resized
-window.addEventListener("resize", resizeCanvas);
-
-// Call the resizeCanvas function once on page load
-resizeCanvas();
 
 const player = new Player(50, 50, 50, 50, "blue");
 
@@ -47,8 +29,14 @@ const keys = {
     },
 };
 
+function gameLoop() {
+    animate();
+    draw();
+    // Call the gameLoop function on the next frame
+    requestAnimationFrame(gameLoop);
+}
+
 function animate() {
-    backgroundImage.updateSprite();
     player.updatePosition();
 
     // Handle key presses
@@ -61,14 +49,43 @@ function animate() {
     }
 }
 
-// Draw everything on the canvas
 function draw() {
     // Clear the entire canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.drawImage(backgroundImage.image, 0, 0, canvas.width, canvas.height);
-
+  
+  
+    backgroundImage.drawSprite();
     player.drawPlayer();
+    collisionBlocks.forEach(collisionBlock => {
+        collisionBlock.drawCollisionBlock();
+    });
+  }
+
+// Start the continuous game loop
+requestAnimationFrame(gameLoop);
+
+function initializeCollisionBlocks() {
+    const floorCollisions2DArray = [];
+    for (let i = 0; i < floorCollisions.length; i += 30) {
+        floorCollisions2DArray.push(floorCollisions.slice(i, i + 30));
+    }
+
+    const collisionBlocks = [];
+
+    for (let i = 0; i < floorCollisions2DArray.length; i++) {
+        for (let j = 0; j < floorCollisions2DArray[i].length; j++) {
+            if (floorCollisions2DArray[i][j] === 243) {
+                collisionBlocks.push(new CollisionBlock({
+                    position: {
+                        x: j * 16,
+                        y: i * 16,
+                    }
+                }));
+            }
+        }
+    }
+
+    return collisionBlocks;
 }
 
 // Eventlistener for key presses
@@ -96,13 +113,3 @@ document.addEventListener("keyup", function (event) {
         keys.d.pressed = false;
     }
 });
-
-function gameLoop() {
-    animate();
-    draw();
-    // Call the gameLoop function on the next frame
-    requestAnimationFrame(gameLoop);
-}
-
-// Start the continuous game loop
-requestAnimationFrame(gameLoop);
