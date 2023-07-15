@@ -3,9 +3,26 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const gravity = 0.5;
 
+
+// const floorCollisions2DArray = [];
+// for (let i = 0; i < floorCollisions.length; i += 30) {
+//     floorCollisions2DArray.push(floorCollisions.slice(i, i + 30));
+// }
+
+// for (let i = 0; i < floorCollisions2DArray.length; i++) {
+//     for (let j = 0; j < floorCollisions2DArray[i].length; j++) {
+//       // If the element has a value of 202, create a new Block object
+//       if (floorCollisions2DArray[i][j] === 202) {};
+
 // Load the background image
-const backgroundImage = new Image();
-backgroundImage.src = "img/5.png";
+const backgroundImage = new Sprite({
+    position: {
+        x: 0,
+        y: 0,
+    },
+    imageSrc: "img/5.png",
+});
+
 
 // Resize the canvas to the size of the screen
 function resizeCanvas() {
@@ -19,51 +36,6 @@ window.addEventListener("resize", resizeCanvas);
 // Call the resizeCanvas function once on page load
 resizeCanvas();
 
-class Player {
-    constructor(x, y, width, height, color) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.color = color;
-        this.velocityY = 0;
-        this.velocityX = 0;
-    }
-
-    updatePosition() {
-        this.velocityY += gravity;
-
-        this.y += this.velocityY;
-
-        if (this.y + this.height > canvas.height) {
-            this.y = canvas.height - this.height;
-            this.velocityY = 0;
-        }
-
-        if (this.y < 0) {
-            this.y = 0;
-            this.velocityY = 0;
-        }
-
-        this.x += this.velocityX;
-
-        if (this.x + this.width > canvas.width) {
-            this.x = canvas.width - this.width;
-        }
-
-        if (this.x < 0) {
-            this.x = 0;
-        }
-
-        this.draw();
-    }
-
-    draw() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-}
-
 const player = new Player(50, 50, 50, 50, "blue");
 
 const keys = {
@@ -76,6 +48,7 @@ const keys = {
 };
 
 function animate() {
+    backgroundImage.updateSprite();
     player.updatePosition();
 
     // Handle key presses
@@ -88,15 +61,14 @@ function animate() {
     }
 }
 
+// Draw everything on the canvas
 function draw() {
     // Clear the entire canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw the background image
-    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(backgroundImage.image, 0, 0, canvas.width, canvas.height);
 
-    // Draw the player
-    player.draw();
+    player.drawPlayer();
 }
 
 // Eventlistener for key presses
