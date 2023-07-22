@@ -4,9 +4,8 @@ const ctx = canvas.getContext("2d");
 
 const gravity = 0.5;
 
-canvas.width = 960;
-canvas.height = 576;
-
+canvas.width = 480;
+canvas.height = 300;
 
 const backgroundImage = new Sprite({
     position: {
@@ -16,8 +15,28 @@ const backgroundImage = new Sprite({
     imageSrc: "img/test.png",
 });
 
-const floorCollisionBlocks = initializeCollisionBlocks(floorCollisions, 243);
-const platformCollisionBlocks = initializeCollisionBlocks(platformCollisions, 243);
+var playerVelocityX = 0;
+var playerVelocityY = 0;
+var playerWidth = 50;
+var playerHeight = 50;
+var playerColour = 50;
+
+
+const keys = {
+    d: {
+        pressed: false,
+    },
+    a: {
+        pressed: false,
+    },
+};
+
+const collisionBlockNumber = 243;
+const floorCollisionBlocks = initializeCollisionBlocks(floorCollisions, collisionBlockNumber);
+const platformCollisionBlocks = initializeCollisionBlocks(platformCollisions, collisionBlockNumber);
+
+const player = new Player(playerVelocityX, playerVelocityY, playerWidth, playerHeight, "blue", 
+floorCollisionBlocks, platformCollisionBlocks);
 
 function initializeCollisionBlocks(collisionsData, collisionBlockNumber) {
     const collisions2DArray = [];
@@ -45,16 +64,6 @@ function initializeCollisionBlocks(collisionsData, collisionBlockNumber) {
     return collisionBlocks;
 }
 
-const player = new Player(50, 50, 50, 50, "blue");
-
-const keys = {
-    d: {
-        pressed: false,
-    },
-    a: {
-        pressed: false,
-    },
-};
 
 function gameLoop() {
     animate();
@@ -117,7 +126,7 @@ document.addEventListener("keydown", function (event) {
     if (event.code === "Space") {
         // Only jump if the player is on the ground or has a slight tolerance
         if (player.y + player.height >= canvas.height - 1) {
-            player.velocityY = -15; // Set the player's jump height
+            player.velocityY = -13; // Set the player's jump height
         }
     }
 });
