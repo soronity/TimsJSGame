@@ -2,7 +2,7 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-const gravity = 0.5;
+const gravity = 0.3;
 
 canvas.width = 480;
 canvas.height = 300;
@@ -17,9 +17,9 @@ const backgroundImage = new Sprite({
 
 var playerVelocityX = 0;
 var playerVelocityY = 0;
-var playerWidth = 50;
-var playerHeight = 50;
-var playerColour = 50;
+var playerWidth = 20;
+var playerHeight = 20;
+var playerColour = 20;
 
 
 const keys = {
@@ -34,13 +34,11 @@ const keys = {
 const collisionBlockNumber = 243;
 const floorCollisionBlocks = initializeCollisionBlocks(floorCollisions, collisionBlockNumber);
 const platformCollisionBlocks = initializeCollisionBlocks(platformCollisions, collisionBlockNumber);
-
 const player = new Player(playerVelocityX, playerVelocityY, playerWidth, playerHeight, "blue", 
 floorCollisionBlocks, platformCollisionBlocks);
 
 function initializeCollisionBlocks(collisionsData, collisionBlockNumber) {
     const collisions2DArray = [];
-    console.log(collisionsData);
     for (let i = 0; i < collisionsData.length; i += 30) {
         collisions2DArray.push(collisionsData.slice(i, i + 30));
     }
@@ -73,13 +71,12 @@ function gameLoop() {
 }
 
 function animate() {
-    player.updatePosition();
 
     // Handle key presses
     if (keys.a.pressed) {
-        player.velocityX = -5; // Set negative horizontal velocity to move left
+        player.velocityX = -3; // Set negative horizontal velocity to move left
     } else if (keys.d.pressed) {
-        player.velocityX = 5; // Set positive horizontal velocity to move right
+        player.velocityX = 3; // Set positive horizontal velocity to move right
     } else {
         player.velocityX = 0;
     }
@@ -89,10 +86,11 @@ function animate() {
 function draw() {
     // Clear the entire canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    
     // Draw the background image
     backgroundImage.drawSprite();
-    player.drawPlayer();
+    player.updatePosition();
+
     floorCollisionBlocks.forEach(collisionBlock => {
         // Scale the collision block proportionally based on the background image scale
         const collisionBlockScale = backgroundImage.scale;
@@ -121,12 +119,11 @@ document.addEventListener("keydown", function (event) {
     } else if (event.code === "KeyD") {
         keys.d.pressed = true;
     }
-
     // Jump with the space bar
     if (event.code === "Space") {
-        // Only jump if the player is on the ground or has a slight tolerance
-        if (player.y + player.height >= canvas.height - 1) {
-            player.velocityY = -13; // Set the player's jump height
+        if (player.isOnGround && !player.isMidAir) {
+            player.velocityY = -5; // Set the player's jump height
+            player.isMidAir = true; // Set the player to be mid-air
         }
     }
 });
