@@ -11,28 +11,21 @@ class Player {
         this.floorCollisionBlocks = floorCollisionBlocks;
         this.platformCollisionBlocks = platformCollisionBlocks;
     }
-
+    
     updatePosition() {
+        this.drawPlayer();
+        this.checkVerticalCollision();
         this.addGravity();
-    
-        // Save the current position in case we need to revert
-        const prevX = this.x;
-        const prevY = this.y;
-    
+        
         // Update the player's position based on velocity
         this.x += this.velocityX;
         this.y += this.velocityY;
-    
-        // Check for collisions with floor collision blocks
-        this.checkVerticalCollision();
     
         // Check if the player is out of bounds on the x-axis
         if (this.x + this.width > canvas.width || this.x < 0) {
             this.x = prevX; // Revert to previous position to prevent going out of bounds
         }
     
-        // Draw the player
-        this.drawPlayer();
     }
 
     addGravity() {
