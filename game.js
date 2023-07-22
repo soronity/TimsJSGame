@@ -4,10 +4,9 @@ const ctx = canvas.getContext("2d");
 
 const gravity = 0.5;
 
-canvas.width = 1024;
+canvas.width = 960;
 canvas.height = 576;
 
-const collisionBlocks = initializeCollisionBlocks();
 
 const backgroundImage = new Sprite({
     position: {
@@ -15,8 +14,36 @@ const backgroundImage = new Sprite({
         y: 0,
     },
     imageSrc: "img/test.png",
-    scale: 2,
 });
+
+const floorCollisionBlocks = initializeCollisionBlocks(floorCollisions, 243);
+const platformCollisionBlocks = initializeCollisionBlocks(platformCollisions, 243);
+
+function initializeCollisionBlocks(collisionsData, collisionBlockNumber) {
+    const collisions2DArray = [];
+    console.log(collisionsData);
+    for (let i = 0; i < collisionsData.length; i += 30) {
+        collisions2DArray.push(collisionsData.slice(i, i + 30));
+    }
+
+    const collisionBlocks = [];
+
+    for (let i = 0; i < collisions2DArray.length; i++) {
+        for (let j = 0; j < collisions2DArray[i].length; j++) {
+            if (collisions2DArray[i][j] === collisionBlockNumber) {
+                collisionBlocks.push(new CollisionBlock({
+                    position: {
+                        x: j * 16,
+                        y: i * 16,
+                    },
+                    scale: 1,
+                }));
+            }
+        }
+    }
+
+    return collisionBlocks;
+}
 
 const player = new Player(50, 50, 50, 50, "blue");
 
@@ -31,7 +58,7 @@ const keys = {
 
 function gameLoop() {
     animate();
-    draw();
+    draw();   
     // Call the gameLoop function on the next frame
     requestAnimationFrame(gameLoop);
 }
@@ -49,44 +76,34 @@ function animate() {
     }
 }
 
+
 function draw() {
     // Clear the entire canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-  
+
+    // Draw the background image
     backgroundImage.drawSprite();
     player.drawPlayer();
-    collisionBlocks.forEach(collisionBlock => {
-        collisionBlock.drawCollisionBlock();
+    floorCollisionBlocks.forEach(collisionBlock => {
+        // Scale the collision block proportionally based on the background image scale
+        const collisionBlockScale = backgroundImage.scale;
+        collisionBlock.drawCollisionBlock(collisionBlockScale);
     });
-  }
+    platformCollisionBlocks.forEach(collisionBlock => {
+        // Scale the collision block proportionally based on the background image scale
+        const collisionBlockScale = backgroundImage.scale;
+        collisionBlock.drawCollisionBlock(collisionBlockScale);
+    });
+}
+
 
 // Start the continuous game loop
 requestAnimationFrame(gameLoop);
 
-function initializeCollisionBlocks() {
-    const floorCollisions2DArray = [];
-    for (let i = 0; i < floorCollisions.length; i += 30) {
-        floorCollisions2DArray.push(floorCollisions.slice(i, i + 30));
-    }
-
-    const collisionBlocks = [];
-
-    for (let i = 0; i < floorCollisions2DArray.length; i++) {
-        for (let j = 0; j < floorCollisions2DArray[i].length; j++) {
-            if (floorCollisions2DArray[i][j] === 243) {
-                collisionBlocks.push(new CollisionBlock({
-                    position: {
-                        x: j * 16,
-                        y: i * 16,
-                    }
-                }));
-            }
-        }
-    }
-
-    return collisionBlocks;
+function setScale(scale) {
+    backgroundImage.scale = scale;
 }
+
 
 // Eventlistener for key presses
 document.addEventListener("keydown", function (event) {
@@ -100,7 +117,7 @@ document.addEventListener("keydown", function (event) {
     if (event.code === "Space") {
         // Only jump if the player is on the ground or has a slight tolerance
         if (player.y + player.height >= canvas.height - 1) {
-            player.velocityY = -20; // Set the player's jump height
+            player.velocityY = -15; // Set the player's jump height
         }
     }
 });

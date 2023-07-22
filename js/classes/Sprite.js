@@ -1,18 +1,20 @@
 class Sprite {
-    constructor({position, imageSrc, scale}) {
-        this.position = position;
+    constructor(options) {
+        this.position = options.position;
+        this.imageSrc = options.imageSrc;
+        this.scale = 2; // Add a scale property, defaulting to 1 if not provided
+
         this.image = new Image();
-        this.image.src = imageSrc;
-        this.scale = scale
+        this.image.src = this.imageSrc;
     }
 
     drawSprite() {
         ctx.drawImage(
-            this.image, 
-            this.position.x, 
+            this.image,
+            this.position.x,
             this.position.y,
-            this.image.width * this.scale,
-            this.image.height * this.scale
+            this.image.width * this.scale, // Apply the scale to the width
+            this.image.height * this.scale // Apply the scale to the height
         );
     }
 }
