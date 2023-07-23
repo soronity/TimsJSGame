@@ -76,13 +76,13 @@ const keys = {
     },
 };
 function gameLoop() {
-    player1.handleKeyPress(keys);  // 1. Handle Player Input
     updateGameState();             // 2. Update Game State
     draw();                        // 3. Render
     requestAnimationFrame(gameLoop);
 }
 
 function updateGameState() {
+    player1.handleKeyPress(keys);  // 1. Handle Player Input
     player1.updatePosition();
     player1.updateAnimation();
     // any other game state updates

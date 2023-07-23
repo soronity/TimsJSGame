@@ -42,7 +42,6 @@ class Player {
         }
     }
     
-    
     updatePosition() {
         this.drawPlayer();
         this.addGravity();
@@ -51,7 +50,8 @@ class Player {
             this.jump();
         }
     
-        this.checkDownwardCollision();
+        this.checkFloorCollision();
+        this.checkPlatformCollision();
     
         this.x += this.velocityX;
         this.y += this.velocityY;
@@ -60,7 +60,6 @@ class Player {
             this.x = Math.min(Math.max(this.x, 0), canvas.width - this.width);
         }
     }
-    
 
     jump() {
         if (!this.isMidAir && (this.isOnFloor() || this.isOnPlatform())) {
@@ -70,11 +69,10 @@ class Player {
         }
     }
     
-    
     isOnPlatform() {
         const playerBottom = this.y + this.height;
         for (const block of platformCollisionBlocks) {
-            if (this.collidesWith(block) && playerBottom <= block.position.y + 1) {
+            if (this.collidesWith(block) && playerBottom <= block.position.y + 1 && this.velocityY >= 0) {
                 this.velocityY = 0;
                 this.isMidAir = false; 
                 return true;
@@ -87,12 +85,13 @@ class Player {
         const playerBottom = this.y + this.height;
         for (const block of floorCollisionBlocks) {
             if (this.collidesWith(block) && playerBottom <= block.position.y + 1) {
+                this.y = block.position.y - this.height; // Set y position
                 return true;
             }
         }
         return false;
     }
-
+    
     collidesWith(otherObject) {
         const left = this.x;
         const right = this.x + this.width;
@@ -111,35 +110,45 @@ class Player {
         );
     }
 
-    checkDownwardCollision() {
+    checkFloorCollision() {
         for (let i = 0; i < floorCollisionBlocks.length; i++) {
             const collisionBlock = floorCollisionBlocks[i];
-    
-            // Check if player is coming down from a jump and collides with the floor block
-            if (this.velocityY >= 0 && collision({ player: this, collisionBlock })) {
+            
+            if (this.velocityY >= 0 && this.collidesWith(collisionBlock)) {
                 this.velocityY = 0;
                 this.y = collisionBlock.position.y - this.height;
                 this.isMidAir = false;
-                return; // We found a collision, no need to check further for now.
+                return true;  // Return true to indicate a collision was found.
             }
         }
+        return false; // Return false if no collision was found.
+    }
     
+    checkPlatformCollision() {
         for (let i = 0; i < platformCollisionBlocks.length; i++) {
             const collisionBlock = platformCollisionBlocks[i];
-            if (this.velocityY > 0 && collision({ player: this, collisionBlock })) {
-                this.velocityY = 0;
-                this.y = collisionBlock.position.y - this.height - 1;
-                this.isMidAir = false;
-                return; // We found a collision, no need to check further for now.
+            
+            if (this.velocityY > 0 && this.collidesWith(collisionBlock)) {
+                const previousPlayerBottom = this.y + this.height - this.velocityY;
+                // Check if the player was previously above the platform block before the last movement
+                if (previousPlayerBottom <= collisionBlock.position.y) {
+                    this.velocityY = 0;
+                    this.y = collisionBlock.position.y - this.height;
+                    this.isMidAir = false;
+                    return true; // Return true to indicate a collision was found.
+                }
             }
         }
+        return false; // Return false if no collision was found.
     }
     
     
     addGravity() {  
-        // Add gravity to the vertical velocity
-        this.velocityY += gravity;
+        if (!this.isOnPlatform() && !this.isOnFloor()) {
+            this.velocityY += gravity;
+        }
     }
+    
 
     drawPlayer() {
         const currentFrameX = this.currentFrame * this.spriteWidth;
