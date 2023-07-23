@@ -13,14 +13,27 @@ const backgroundImage = new Sprite({
         y: 0,
     },
     imageSrc: "img/test.png",
+    scale: 1,
 });
+
+const playerSprite = new Image();
+playerSprite.src = "img/characters/pinkMonster/Pink_Monster_Idle_4.png";
+
+const playerSpriteWidth = 32; // Width of each individual stance in the sprite sheet
+const playerSpriteHeight = 32; // Height of each individual stance in the sprite sheet
+const totalFrames = 4; // Total number of frames (stances) in the sprite sheet
+const animationSpeed = 10; // Lower value makes the animation faster
+
+// Add a new property to keep track of the current frame index
+let currentFrame = 0;
+
+// Add a new property to keep track of the animation frame counter
+let frameCounter = 0;
 
 var playerVelocityX = 0;
 var playerVelocityY = 0;
 var playerWidth = 20;
 var playerHeight = 20;
-var playerColour = 20;
-
 
 const keys = {
     d: {
@@ -34,7 +47,7 @@ const keys = {
 const collisionBlockNumber = 243;
 const floorCollisionBlocks = initializeCollisionBlocks(floorCollisions, collisionBlockNumber);
 const platformCollisionBlocks = initializeCollisionBlocks(platformCollisions, collisionBlockNumber);
-const player = new Player(playerVelocityX, playerVelocityY, playerWidth, playerHeight, "blue", 
+const player = new Player(playerVelocityX, playerVelocityY, playerWidth, playerHeight, 
 floorCollisionBlocks, platformCollisionBlocks);
 
 function initializeCollisionBlocks(collisionsData, collisionBlockNumber) {
@@ -80,6 +93,8 @@ function animate() {
     } else {
         player.velocityX = 0;
     }
+
+    player.updateAnimation();
 }
 
 
@@ -106,10 +121,6 @@ function draw() {
 
 // Start the continuous game loop
 requestAnimationFrame(gameLoop);
-
-function setScale(scale) {
-    backgroundImage.scale = scale;
-}
 
 
 // Eventlistener for key presses

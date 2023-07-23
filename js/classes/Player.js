@@ -1,12 +1,10 @@
 class Player {
 
-    constructor(x, y, width, height, color, floorCollisionBlocks, platformCollisionBlocks) {
+    constructor(x, y, width, height, floorCollisionBlocks, platformCollisionBlocks) {
         this.x = x;
         this.y = y;
         this.width = width;
-        this.height = height;
-        this.color = color;
-        this.velocityY = 0;
+        this.height = height;        this.velocityY = 0;
         this.velocityX = 0;
         this.floorCollisionBlocks = floorCollisionBlocks;
         this.platformCollisionBlocks = platformCollisionBlocks;
@@ -74,7 +72,35 @@ checkDownwardCollision() {
     }
 
     drawPlayer() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        
+        // Calculate the x position of the current frame in the sprite sheet
+        const currentFrameX = currentFrame * playerSpriteWidth;
+
+        // Use the player sprite image to draw the current frame
+        ctx.drawImage(
+            playerSprite,
+            currentFrameX,
+            0, // Y position is 0 as all stances are on the same row
+            playerSpriteWidth,
+            playerSpriteHeight,
+            this.x,
+            this.y,
+            this.width,
+            this.height
+        );
+    }
+
+    updateAnimation() {
+        // Increment the frame counter
+        frameCounter++;
+
+        // Check if enough frames have passed to update the animation
+        if (frameCounter >= animationSpeed) {
+            // Reset the frame counter
+            frameCounter = 0;
+
+            // Increment the current frame index
+            currentFrame = (currentFrame + 1) % totalFrames;
+        }    
     }
 }
