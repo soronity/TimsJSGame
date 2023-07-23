@@ -1,88 +1,155 @@
 class Player {
 
-    constructor(x, y, width, height, floorCollisionBlocks, platformCollisionBlocks) {
+    constructor({
+        x,
+        y,
+        width,
+        height,
+        spriteSrc,
+        spriteWidth,
+        spriteHeight,
+        totalFrames,
+        animationSpeed,
+    }) {
         this.x = x;
         this.y = y;
         this.width = width;
-        this.height = height;        this.velocityY = 0;
+        this.height = height;
+        this.velocityY = 0;
         this.velocityX = 0;
-        this.floorCollisionBlocks = floorCollisionBlocks;
-        this.platformCollisionBlocks = platformCollisionBlocks;
         this.isMidAir = false;
+        this.sprite = new Image();
+        this.sprite.src = spriteSrc;
+        this.spriteWidth = spriteWidth;
+        this.spriteHeight = spriteHeight;
+        this.totalFrames = totalFrames;
+        this.animationSpeed = animationSpeed;
+        this.currentFrame = 0;
+        this.frameCounter = 0;
     }
+
+    handleKeyPress(keys) {
+        if (keys.a.pressed) {
+            this.velocityX = -3;
+        } else if (keys.d.pressed) {
+            this.velocityX = 3;
+        } else {
+            this.velocityX = 0;
+        }
+    
+        if (keys.space.pressed) {
+            this.jump();
+        }
+    }
+    
     
     updatePosition() {
         this.drawPlayer();
         this.addGravity();
+    
+        if (keys.space.pressed) {
+            this.jump();
+        }
+    
         this.checkDownwardCollision();
-        
-        // Update the player's position based on velocity
+    
         this.x += this.velocityX;
         this.y += this.velocityY;
-        
-        // Check if the player is out of bounds on the x-axis
+    
         if (this.x + this.width > canvas.width || this.x < 0) {
-            // Move the player back inside the canvas
             this.x = Math.min(Math.max(this.x, 0), canvas.width - this.width);
         }
     }
+    
 
-    addGravity() {
-        this.velocityY += gravity;
-        this.y += this.velocityY;
-    }
-
-checkDownwardCollision() {
-    for (let i = 0; i < this.floorCollisionBlocks.length; i++) {
-        const collisionBlock = this.floorCollisionBlocks[i];
-
-        // Check for collision with the top side of the collision block
-        if (collision({ player: this, collisionBlock })) {
-            // Collided from above, stop vertical velocity and move player to the top of the collision block
-            this.velocityY = 0;
-            this.y = collisionBlock.position.y - this.height;
-            this.isMidAir = false;
+    jump() {
+        if (!this.isMidAir && (this.isOnFloor() || this.isOnPlatform())) {
+            console.log("jumping");
+            this.velocityY = -7;
+            this.isMidAir = true;
         }
     }
-
-    for (let i = 0; i < this.platformCollisionBlocks.length; i++) {
-        const collisionBlock = this.platformCollisionBlocks[i];
-
-        // Check for collision with the top side of the collision block
-        if (this.velocityY > 0 && collision({ player: this, collisionBlock })) {
-            // Collided from above, stop vertical velocity and adjust player's position slightly before the collision block
-            this.velocityY = 0;
-            this.y = collisionBlock.position.y - this.height - 1; // Adjust the player's position slightly above the platform
-            this.isMidAir = false;
-        }
-    }
-}
-
-
-    isOnGround() {
-        // Check collision with the ground
-        for (const block of floorCollisionBlocks) {
-            if (this.collidesWith(block)) {
-                // Reset vertical velocity when touching the ground
+    
+    
+    isOnPlatform() {
+        const playerBottom = this.y + this.height;
+        for (const block of platformCollisionBlocks) {
+            if (this.collidesWith(block) && playerBottom <= block.position.y + 1) {
                 this.velocityY = 0;
+                this.isMidAir = false; 
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    isOnFloor() {
+        const playerBottom = this.y + this.height;
+        for (const block of floorCollisionBlocks) {
+            if (this.collidesWith(block) && playerBottom <= block.position.y + 1) {
                 return true;
             }
         }
         return false;
     }
 
-    drawPlayer() {
-        
-        // Calculate the x position of the current frame in the sprite sheet
-        const currentFrameX = currentFrame * playerSpriteWidth;
+    collidesWith(otherObject) {
+        const left = this.x;
+        const right = this.x + this.width;
+        const top = this.y;
+        const bottom = this.y + this.height;
+        const otherLeft = otherObject.position.x;
+        const otherRight = otherObject.position.x + otherObject.width;
+        const otherTop = otherObject.position.y;
+        const otherBottom = otherObject.position.y + otherObject.height;
+    
+        return (
+            left < otherRight &&
+            right > otherLeft &&
+            top < otherBottom &&
+            bottom > otherTop
+        );
+    }
 
-        // Use the player sprite image to draw the current frame
+    checkDownwardCollision() {
+        for (let i = 0; i < floorCollisionBlocks.length; i++) {
+            const collisionBlock = floorCollisionBlocks[i];
+    
+            // Check if player is coming down from a jump and collides with the floor block
+            if (this.velocityY >= 0 && collision({ player: this, collisionBlock })) {
+                this.velocityY = 0;
+                this.y = collisionBlock.position.y - this.height;
+                this.isMidAir = false;
+                return; // We found a collision, no need to check further for now.
+            }
+        }
+    
+        for (let i = 0; i < platformCollisionBlocks.length; i++) {
+            const collisionBlock = platformCollisionBlocks[i];
+            if (this.velocityY > 0 && collision({ player: this, collisionBlock })) {
+                this.velocityY = 0;
+                this.y = collisionBlock.position.y - this.height - 1;
+                this.isMidAir = false;
+                return; // We found a collision, no need to check further for now.
+            }
+        }
+    }
+    
+    
+    addGravity() {  
+        // Add gravity to the vertical velocity
+        this.velocityY += gravity;
+    }
+
+    drawPlayer() {
+        const currentFrameX = this.currentFrame * this.spriteWidth;
+
         ctx.drawImage(
-            playerSprite,
+            this.sprite,
             currentFrameX,
-            0, // Y position is 0 as all stances are on the same row
-            playerSpriteWidth,
-            playerSpriteHeight,
+            0,
+            this.spriteWidth,
+            this.spriteHeight,
             this.x,
             this.y,
             this.width,
@@ -91,16 +158,11 @@ checkDownwardCollision() {
     }
 
     updateAnimation() {
-        // Increment the frame counter
-        frameCounter++;
+        this.frameCounter++;
 
-        // Check if enough frames have passed to update the animation
-        if (frameCounter >= animationSpeed) {
-            // Reset the frame counter
-            frameCounter = 0;
-
-            // Increment the current frame index
-            currentFrame = (currentFrame + 1) % totalFrames;
-        }    
+        if (this.frameCounter >= this.animationSpeed) {
+            this.frameCounter = 0;
+            this.currentFrame = (this.currentFrame + 1) % this.totalFrames;
+        }
     }
 }

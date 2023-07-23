@@ -1,4 +1,4 @@
-class Sprite {
+class Background {
     constructor(options) {
         this.position = options.position;
         this.imageSrc = options.imageSrc;
@@ -8,7 +8,7 @@ class Sprite {
         this.image.src = this.imageSrc;
     }
 
-    drawSprite() {
+    drawBackground() {
         if (!this.image) return; // If the image is not loaded, don't try to draw it
         
         ctx.drawImage(
