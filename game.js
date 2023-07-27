@@ -76,27 +76,16 @@ let currentFrame = 0;
 // Add a new property to keep track of the animation frame counter
 let frameCounter = 0;
 
-const keysPlayer1 = {
-    a: {
-        pressed: false,
+const keys = {
+    player1: {
+        a: { pressed: false },
+        d: { pressed: false },
+        w: { pressed: false },
     },
-    d: {
-        pressed: false,
-    },
-    w: {
-        pressed: false,
-    },
-};
-
-const keysPlayer2 = {
-    arrowLeft: {
-        pressed: false,
-    },
-    arrowRight: {
-        pressed: false,
-    },
-    arrowUp: {
-        pressed: false,
+    player2: {
+        arrowLeft: { pressed: false },
+        arrowRight: { pressed: false },
+        arrowUp: { pressed: false },
     },
 };
 
@@ -107,13 +96,19 @@ function gameLoop() {
 }
 
 function updateGameState() {
-    player1.handleKeyPressPlayer1(keysPlayer1);
-    player1.updatePosition();
+    console.log("keys for player1:", keys.player1);
+    console.log("keys for player2:", keys.player2);
+
+    player1.handleKeyPress(keys.player1);
+    player1.updatePosition(keys.player1);
     player1.updateAnimation();
-    player2.handleKeyPressPlayer2(keysPlayer2);
-    player2.updatePosition();
+
+    player2.handleKeyPress(keys.player2);
+    player2.updatePosition(keys.player2);
     player2.updateAnimation();
 }
+
+
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -136,46 +131,32 @@ function draw() {
 requestAnimationFrame(gameLoop);
 
 document.addEventListener("keydown", function (event) {
-    if (event.code === "KeyA") {
-        keysPlayer1.a.pressed = true;
-    } else if (event.code === "KeyD") {
-        keysPlayer1.d.pressed = true;
-    }
-    if (event.code === "KeyW") {
-        keysPlayer1.w.pressed = true;
-    }
+    updateKeyPressedState(event.code, true);
 });
 
 document.addEventListener("keyup", function (event) {
-    if (event.code === "KeyA") {
-        keysPlayer1.a.pressed = false;
-    } else if (event.code === "KeyD") {
-        keysPlayer1.d.pressed = false;
-    }
-    if (event.code === "KeyW") {
-        keysPlayer1.w.pressed = false;
-    }
+    updateKeyPressedState(event.code, false);
 });
 
-document.addEventListener("keydown", function (event) {
-    if (event.code === "ArrowLeft") {
-        keysPlayer2.arrowLeft.pressed = true;
-    } else if (event.code === "ArrowRight") {
-        keysPlayer2.arrowRight.pressed = true;
-    }
-    if (event.code === "ArrowUp") {
-        keysPlayer2.arrowUp.pressed = true;
-    }
-});
 
-document.addEventListener("keyup", function (event) {
-    if (event.code === "ArrowLeft") {
-        keysPlayer2.arrowLeft.pressed = false;
-    } else if (event.code === "ArrowRight") {
-        keysPlayer2.arrowRight.pressed = false;
+function updateKeyPressedState(code, isPressed) {
+    // Player 1 controls
+    if (code === "KeyA") {
+        keys.player1.a.pressed = isPressed;
+    } else if (code === "KeyD") {
+        keys.player1.d.pressed = isPressed;
+    } else if (code === "KeyW") {
+        keys.player1.w.pressed = isPressed;
     }
-    if (event.code === "ArrowUp") {
-        keysPlayer2.arrowUp.pressed = false;
+
+    // Player 2 controls
+    if (code === "ArrowLeft") {
+        keys.player2.arrowLeft.pressed = isPressed;
+    } else if (code === "ArrowRight") {
+        keys.player2.arrowRight.pressed = isPressed;
+    } else if (code === "ArrowUp") {
+        keys.player2.arrowUp.pressed = isPressed;
     }
-});
+}
+
 

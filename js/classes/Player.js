@@ -27,43 +27,32 @@ class Player {
         this.frameCounter = 0;
     }
 
-    handleKeyPressPlayer1(options) {
-        if (options.a.pressed) {
+    handleKeyPress(options) {
+        if ((options.a && options.a.pressed) || (options.arrowLeft && options.arrowLeft.pressed)) {
             this.velocityX = -3;
-        } else if (options.d.pressed) {
+        } else if ((options.d && options.d.pressed) || (options.arrowRight && options.arrowRight.pressed)) {
             this.velocityX = 3;
         } else {
             this.velocityX = 0;
         }
-        if (options.w.pressed) {
+    
+        if (options.w && options.w.pressed) { 
             this.jump();
-        }
-    }
-
-    handleKeyPressPlayer2(options) {
-        if (options.arrowLeft.pressed) {
-            this.velocityX = -3;
-        } else if (options.arrowRight.pressed) {
-            this.velocityX = 3;
-        } else {
-            this.velocityX = 0;
-        }
-        if (options.arrowUp.pressed) {
+        } else if (options.arrowUp && options.arrowUp.pressed) { 
             this.jump();
         }
     }
     
-    updatePosition() {
-        this.drawPlayer();
+    updatePosition(options) {
+        console.log("Inside updatePosition:", options);        this.drawPlayer();
         this.addGravity();
     
-        if (keysPlayer1.w.pressed) {
+        if (options.w && options.w.pressed) { 
+            this.jump();
+        } else if (options.arrowUp && options.arrowUp.pressed) { 
             this.jump();
         }
-        else if (keysPlayer2.arrowUp.pressed) {
-            this.jump();
-        }
-
+        
     
         this.checkFloorCollision();
         this.checkPlatformCollision();
