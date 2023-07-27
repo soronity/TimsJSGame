@@ -56,7 +56,7 @@ const player1 = new Player({
     spriteHeight: 32,
     totalFrames: 4,
     animationSpeed: 10,
-    id: "Player 1 wins!!! <3",
+    id: "Pink wins <333",
     direction: "left"
 });
 
@@ -70,7 +70,7 @@ const player2 = new Player({
     spriteHeight: 32,
     totalFrames: 4,
     animationSpeed: 10,
-    id: "Player 2 wins!!! <3",
+    id: "Owlet wins XD",
     direction: "right",
 });
 
@@ -98,11 +98,12 @@ const keys = {
 let gameOver = false;
 
 function gameLoop() {
-    if (!gameOver) {
-        updateGameState();
-        draw();                        
+    updateGameState();
+    draw();
+    // Even if game is over, we'll keep drawing until the winner message is displayed.
+    if (!gameOver || (player1.health > 0 && player2.health > 0)) {
+        requestAnimationFrame(gameLoop);
     }
-    requestAnimationFrame(gameLoop);
 }
 
 function updateGameState() {
@@ -146,8 +147,15 @@ function drawHealthBar(player, x, y, width, height) {
     const healthPercentage = player.health / player.maxHealth;
     ctx.fillStyle = player.health > 0 ? '#00FF00' : '#FF0000'; // color for the actual health
     ctx.fillRect(x, y, width * healthPercentage, height);
+
+    // Add the black outline
+    ctx.strokeStyle = 'black'; // color for the outline
+    ctx.lineWidth = 2; // thickness of the outline
+    ctx.strokeRect(x, y, width, height);
+
     ctx.restore();
 }
+
 
 function drawMessage(message) {
     ctx.save();
@@ -155,10 +163,30 @@ function drawMessage(message) {
     ctx.fillStyle = "black";  // Text color
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(message, canvas.width / 2, canvas.height / 2 + 35);  // Move 15 pixels below center
+    ctx.fillText(message, canvas.width / 2, canvas.height / 2 - 35);  // Move 15 pixels below center
     ctx.restore();
 }
 
+function restartGame() {
+    player1.health = 100;
+    player2.health = 100;
+    player1.x = 100;
+    player1.y = 200;
+    player2.x = 600;
+    player2.y = 200;
+    gameOver = false;
+    requestAnimationFrame(gameLoop);
+}
+
+function drawRestartMessage() {
+    ctx.save();
+    ctx.font = "20px 'Comic Sans MS'";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Press SPACE to restart", canvas.width / 2, canvas.height / 2 + 35);
+    ctx.restore();
+}
 
 // Start the continuous game loop
 requestAnimationFrame(gameLoop);
@@ -201,6 +229,10 @@ function updateKeyPressedState(code, isPressed) {
     if (code === "ArrowDown") {
         keys.player2.arrowDown.pressed = isPressed;
         if (isPressed) player2.attack(player1); // If the attack key is pressed, call attack
+    }
+
+    if (code === "Space" && isPressed && gameOver) {
+        restartGame();
     }
 
 }

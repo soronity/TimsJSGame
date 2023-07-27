@@ -155,30 +155,33 @@ class Player {
     }
     
     attack(opponent) {
+        if (gameOver) {
+            return;
+        }
         if (this.hitboxCollidesWith(opponent)) {
             opponent.takeDamage(10);
             this.checkForGameOver();
         }
     }
     
+    takeDamage(damage) {
+        this.health -= damage;
+        this.health = Math.max(this.health, 0); // Ensure health doesn't go below 0
+    }
+
     checkForGameOver() {
         if (player1.health <= 0 || player2.health <= 0) {
             // Determine winner based on health
             let winner = player1.health > player2.health ? player1.id : player2.id;
-            
-            // Display the winner's name instead of "Player X"
-            alert(winner);
-
-            drawMessage(winner)
-            
-            // Stop the game loop or any further interactions
             gameOver = true;
-        }
-    }
     
-    takeDamage(damage) {
-        this.health -= damage;
-        this.health = Math.max(this.health, 0); // Ensure health doesn't go below 0
+            // Delay the winner message by a short period (e.g., 1 second)
+            setTimeout(() => {
+                alert(winner);
+                drawMessage(winner);
+                drawRestartMessage();
+            }, 1000);
+        }
     }
     
     checkFloorCollision() {
