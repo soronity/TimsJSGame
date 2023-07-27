@@ -9,6 +9,8 @@ class Player {
         spriteHeight,
         totalFrames,
         animationSpeed,
+        id,
+        direction,
     }) {
         this.x = x;
         this.y = y;
@@ -25,16 +27,39 @@ class Player {
         this.animationSpeed = animationSpeed;
         this.currentFrame = 0;
         this.frameCounter = 0;
+        this.direction = direction; // left or right
+        const player = this;
+        this.hitBox = {
+            width: 5,
+            height: 20,
+            get x() {
+                if (player.direction === "right") {
+                    return player.x + player.width;
+                } else {
+                    return player.x - this.width;
+                }
+            },
+            get y() {
+                return player.y + player.height / 2 - this.height / 2;
+            }
+        };
+        
+        this.health = 100;
+        this.maxHealth = 100;
+        this.id = id;
     }
 
     handleKeyPress(options) {
         if ((options.a && options.a.pressed) || (options.arrowLeft && options.arrowLeft.pressed)) {
             this.velocityX = -3;
+            this.direction = 'left';
         } else if ((options.d && options.d.pressed) || (options.arrowRight && options.arrowRight.pressed)) {
             this.velocityX = 3;
+            this.direction = 'right';
         } else {
             this.velocityX = 0;
         }
+        
     
         if (options.w && options.w.pressed) { 
             this.jump();
@@ -44,7 +69,6 @@ class Player {
     }
     
     updatePosition(options) {
-        console.log("Inside updatePosition:", options);        this.drawPlayer();
         this.addGravity();
     
         if (options.w && options.w.pressed) { 
@@ -52,7 +76,6 @@ class Player {
         } else if (options.arrowUp && options.arrowUp.pressed) { 
             this.jump();
         }
-        
     
         this.checkFloorCollision();
         this.checkPlatformCollision();
@@ -113,6 +136,51 @@ class Player {
         );
     }
 
+    hitboxCollidesWith(otherPlayer) {
+        const left = this.hitBox.x;
+        const right = this.hitBox.x + this.hitBox.width;
+        const top = this.hitBox.y;
+        const bottom = this.hitBox.y + this.hitBox.height;
+        const otherLeft = otherPlayer.x;
+        const otherRight = otherPlayer.x + otherPlayer.width;
+        const otherTop = otherPlayer.y;
+        const otherBottom = otherPlayer.y + otherPlayer.height;
+    
+        return (
+            left < otherRight &&
+            right > otherLeft &&
+            top < otherBottom &&
+            bottom > otherTop
+        );
+    }
+    
+    attack(opponent) {
+        if (this.hitboxCollidesWith(opponent)) {
+            opponent.takeDamage(10);
+            this.checkForGameOver();
+        }
+    }
+    
+    checkForGameOver() {
+        if (player1.health <= 0 || player2.health <= 0) {
+            // Determine winner based on health
+            let winner = player1.health > player2.health ? player1.id : player2.id;
+            
+            // Display the winner's name instead of "Player X"
+            alert(winner);
+
+            drawMessage(winner)
+            
+            // Stop the game loop or any further interactions
+            gameOver = true;
+        }
+    }
+    
+    takeDamage(damage) {
+        this.health -= damage;
+        this.health = Math.max(this.health, 0); // Ensure health doesn't go below 0
+    }
+    
     checkFloorCollision() {
         for (let i = 0; i < floorCollisionBlocks.length; i++) {
             const collisionBlock = floorCollisionBlocks[i];

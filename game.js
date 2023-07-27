@@ -56,6 +56,8 @@ const player1 = new Player({
     spriteHeight: 32,
     totalFrames: 4,
     animationSpeed: 10,
+    id: "Player 1 wins!!! <3",
+    direction: "left"
 });
 
 const player2 = new Player({
@@ -68,6 +70,8 @@ const player2 = new Player({
     spriteHeight: 32,
     totalFrames: 4,
     animationSpeed: 10,
+    id: "Player 2 wins!!! <3",
+    direction: "right",
 });
 
 // Add a new property to keep track of the current frame index
@@ -81,24 +85,27 @@ const keys = {
         a: { pressed: false },
         d: { pressed: false },
         w: { pressed: false },
+        s: { pressed: false } // Attack key for Player 1
     },
     player2: {
         arrowLeft: { pressed: false },
         arrowRight: { pressed: false },
         arrowUp: { pressed: false },
+        arrowDown: { pressed: false } // Attack key for Player 2
     },
 };
 
+let gameOver = false;
+
 function gameLoop() {
-    updateGameState();
-    draw();                        
+    if (!gameOver) {
+        updateGameState();
+        draw();                        
+    }
     requestAnimationFrame(gameLoop);
 }
 
 function updateGameState() {
-    console.log("keys for player1:", keys.player1);
-    console.log("keys for player2:", keys.player2);
-
     player1.handleKeyPress(keys.player1);
     player1.updatePosition(keys.player1);
     player1.updateAnimation();
@@ -125,7 +132,33 @@ function draw() {
         const collisionBlockScale = backgroundImage.scale;
         collisionBlock.drawCollisionBlock(collisionBlockScale);
     });
+
+    //Adjust the x, y, width, and height values to change the health bar size and position
+    drawHealthBar(player1, 10, 10, 100, 10); 
+    drawHealthBar(player2, canvas.width - 100, 10, 100, 10)
 }
+
+function drawHealthBar(player, x, y, width, height) {
+    ctx.save();
+    ctx.fillStyle = '#FF0000'; // color for the background of the health bar
+    ctx.fillRect(x, y, width, height);
+
+    const healthPercentage = player.health / player.maxHealth;
+    ctx.fillStyle = player.health > 0 ? '#00FF00' : '#FF0000'; // color for the actual health
+    ctx.fillRect(x, y, width * healthPercentage, height);
+    ctx.restore();
+}
+
+function drawMessage(message) {
+    ctx.save();
+    ctx.font = "30px 'Comic Sans MS'";  // Change font to Comic Sans MS
+    ctx.fillStyle = "black";  // Text color
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(message, canvas.width / 2, canvas.height / 2 + 35);  // Move 15 pixels below center
+    ctx.restore();
+}
+
 
 // Start the continuous game loop
 requestAnimationFrame(gameLoop);
@@ -157,6 +190,19 @@ function updateKeyPressedState(code, isPressed) {
     } else if (code === "ArrowUp") {
         keys.player2.arrowUp.pressed = isPressed;
     }
+
+    // Player 1 attack
+    if (code === "KeyS") {
+        keys.player1.s.pressed = isPressed;
+        if (isPressed) player1.attack(player2); // If the attack key is pressed, call attack
+    }
+
+    // Player 2 attack
+    if (code === "ArrowDown") {
+        keys.player2.arrowDown.pressed = isPressed;
+        if (isPressed) player2.attack(player1); // If the attack key is pressed, call attack
+    }
+
 }
 
 
