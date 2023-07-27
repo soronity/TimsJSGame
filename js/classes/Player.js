@@ -4,7 +4,8 @@ class Player {
         y,
         width,
         height,
-        spriteSrc,
+        idleSpriteSrc,
+        runSpriteSrc,
         spriteWidth,
         spriteHeight,
         totalFrames,
@@ -19,8 +20,10 @@ class Player {
         this.velocityY = 0;
         this.velocityX = 0;
         this.isMidAir = false;
-        this.sprite = new Image();
-        this.sprite.src = spriteSrc;
+        this.idleSprite = new Image();
+        this.idleSprite.src = idleSpriteSrc;
+        this.runSprite = new Image();
+        this.runSprite.src = runSpriteSrc;
         this.spriteWidth = spriteWidth;
         this.spriteHeight = spriteHeight;
         this.totalFrames = totalFrames;
@@ -98,20 +101,27 @@ class Player {
     isOnPlatform() {
         const playerBottom = this.y + this.height;
         for (const block of platformCollisionBlocks) {
-            if (this.collidesWith(block) && playerBottom <= block.position.y + 1 && this.velocityY >= 0) {
-                this.velocityY = 0;
-                this.isMidAir = false; 
-                return true;
+            if (this.velocityY > 0 && this.collidesWith(block)) {
+                const previousPlayerBottom = this.y + this.height - this.velocityY;
+                // Check if the player was previously above the platform block before the last movement
+                if (previousPlayerBottom <= block.position.y) {
+                    this.velocityY = 0;
+                    this.y = block.position.y - this.height;
+                    this.isMidAir = false;
+                    return true;
+                }
             }
         }
-        return false;
+        return false; // Return false if no collision was found.
     }
+    
     
     isOnFloor() {
         const playerBottom = this.y + this.height;
         for (const block of floorCollisionBlocks) {
             if (this.collidesWith(block) && playerBottom <= block.position.y + 1) {
-                this.y = block.position.y - this.height; // Set y position
+                this.y = block.position.y - this.height;
+                this.isMidAir = false;
                 return true;
             }
         }
@@ -162,7 +172,9 @@ class Player {
             opponent.takeDamage(10);
             this.checkForGameOver();
         }
+        this.checkForGameOver(); // Add this line to check for game over after each attack
     }
+    
     
     takeDamage(damage) {
         this.health -= damage;
@@ -223,27 +235,59 @@ class Player {
     }
 
     drawPlayer() {
-        const currentFrameX = this.currentFrame * this.spriteWidth;
-
-        ctx.drawImage(
-            this.sprite,
-            currentFrameX,
-            0,
-            this.spriteWidth,
-            this.spriteHeight,
-            this.x,
-            this.y,
-            this.width,
-            this.height
-        );
+        let spriteToUse = this.idleSprite;
+        let currentFrameX;
+    
+        if (this.velocityX !== 0) {
+            spriteToUse = this.runSprite;
+        }
+        
+        currentFrameX = this.currentFrame * this.spriteWidth;
+        
+        ctx.save(); // Save the current state of the canvas
+        
+        // If player is facing left, flip the image horizontally
+        if (this.direction === 'left') {
+            ctx.translate(this.x + this.width, this.y); // Move the origin to the right side of the player
+            ctx.scale(-1, 1); // Flip horizontally
+            ctx.drawImage(
+                spriteToUse,
+                currentFrameX,
+                0,
+                this.spriteWidth,
+                this.spriteHeight,
+                0, // Adjust the x position
+                0, // Adjust the y position
+                this.width,
+                this.height
+            );
+        } else {
+            ctx.drawImage(
+                spriteToUse,
+                currentFrameX,
+                0,
+                this.spriteWidth,
+                this.spriteHeight,
+                this.x,
+                this.y,
+                this.width,
+                this.height
+            );
+        }
+        
+        ctx.restore(); // Restore the canvas to its previous state
     }
+   
 
     updateAnimation() {
+        // If player is moving, use the running animation frame count
+        const maxFrames = this.velocityX !== 0 ? 6 : 4;  // 6 frames for running, 4 for idle
+    
         this.frameCounter++;
-
         if (this.frameCounter >= this.animationSpeed) {
             this.frameCounter = 0;
-            this.currentFrame = (this.currentFrame + 1) % this.totalFrames;
+            this.currentFrame = (this.currentFrame + 1) % maxFrames;
         }
     }
+    
 }

@@ -1,18 +1,27 @@
-// Get the canvas element
+//TODO få hjälp med att skapa en bra text där jag skriver att jag fått hjälp från chatgpt
+// Get the canvas elements
 const canvas = document.getElementById("gameCanvas");
+const hiddenCanvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
+const hiddenCtx = hiddenCanvas.getContext("2d");
+
+// Set the size of the visible canvas
+canvas.width = 480;
+canvas.height = 300;
+
+// Set the size of the hidden canvas to match the visible canvas
+hiddenCanvas.width = canvas.width;
+hiddenCanvas.height = canvas.height;
 
 const gravity = 0.3;
 
-canvas.width = 480;
-canvas.height = 300;
 
 const backgroundImage = new Background({
     position: {
         x: 0,
         y: 0,
     },
-    imageSrc: "img/test.png",
+    imageSrc: "img/background_desert.png",
     scale: 1,
 });
 
@@ -51,7 +60,8 @@ const player1 = new Player({
     y: 200,
     width: 20,
     height: 20,
-    spriteSrc: "img/characters/pink/Pink_Monster_Idle_4.png",
+    idleSpriteSrc: "img/characters/pink/Pink_Monster_Idle_4.png",
+    runSpriteSrc: "img/characters/pink/Pink_Monster_Run_6.png",
     spriteWidth: 32,
     spriteHeight: 32,
     totalFrames: 4,
@@ -65,7 +75,8 @@ const player2 = new Player({
     y: 200,
     width: 20,
     height: 20,
-    spriteSrc: "img/characters/owlet/Owlet_Monster_Idle_4.png",
+    idleSpriteSrc: "img/characters/owlet/Owlet_Monster_Idle_4.png",
+    runSpriteSrc: "img/characters/owlet/Owlet_Monster_Run_6.png",
     spriteWidth: 32,
     spriteHeight: 32,
     totalFrames: 4,
@@ -99,12 +110,23 @@ let gameOver = false;
 
 function gameLoop() {
     updateGameState();
+    
+    // Clear the visible canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw the game elements on the hidden canvas
     draw();
-    // Even if game is over, we'll keep drawing until the winner message is displayed.
+    
+    // Copy the hidden canvas to the visible canvas
+    ctx.drawImage(hiddenCanvas, 0, 0);
+    
+    // Even if the game is over, we'll keep drawing until the winner message is displayed.
     if (!gameOver || (player1.health > 0 && player2.health > 0)) {
         requestAnimationFrame(gameLoop);
     }
 }
+
+
 
 function updateGameState() {
     player1.handleKeyPress(keys.player1);
@@ -119,25 +141,32 @@ function updateGameState() {
 
 
 function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    backgroundImage.drawBackground();
-    player1.drawPlayer();
-    player2.drawPlayer();
-    
+    // Clear the hidden canvas
+    hiddenCtx.clearRect(0, 0, hiddenCanvas.width, hiddenCanvas.height);
+
+    backgroundImage.drawBackground(hiddenCtx);
+
+    // Draw collision blocks first
     floorCollisionBlocks.forEach(collisionBlock => {
         const collisionBlockScale = backgroundImage.scale;
-        collisionBlock.drawCollisionBlock(collisionBlockScale);
-    });
-    platformCollisionBlocks.forEach(collisionBlock => {
-        const collisionBlockScale = backgroundImage.scale;
-        collisionBlock.drawCollisionBlock(collisionBlockScale);
+        collisionBlock.drawCollisionBlock(hiddenCtx, collisionBlockScale);
     });
 
-    //Adjust the x, y, width, and height values to change the health bar size and position
-    drawHealthBar(player1, 10, 10, 100, 10); 
-    drawHealthBar(player2, canvas.width - 100, 10, 100, 10)
+    platformCollisionBlocks.forEach(collisionBlock => {
+        const collisionBlockScale = backgroundImage.scale;
+        collisionBlock.drawCollisionBlock(hiddenCtx, collisionBlockScale);
+    });
+
+    // Draw the players
+    player1.drawPlayer(hiddenCtx);
+    player2.drawPlayer(hiddenCtx);
+
+    // Draw health bars on top of the players
+    drawHealthBar(player1, 10, 10, 100, 10, hiddenCtx);
+    drawHealthBar(player2, canvas.width - 100, 10, 100, 10, hiddenCtx);
 }
+
+
 
 function drawHealthBar(player, x, y, width, height) {
     ctx.save();
