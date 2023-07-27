@@ -1,5 +1,4 @@
 class Player {
-
     constructor({
         x,
         y,
@@ -28,16 +27,28 @@ class Player {
         this.frameCounter = 0;
     }
 
-    handleKeyPress(keys) {
-        if (keys.a.pressed) {
+    handleKeyPressPlayer1(options) {
+        if (options.a.pressed) {
             this.velocityX = -3;
-        } else if (keys.d.pressed) {
+        } else if (options.d.pressed) {
             this.velocityX = 3;
         } else {
             this.velocityX = 0;
         }
-    
-        if (keys.space.pressed) {
+        if (options.w.pressed) {
+            this.jump();
+        }
+    }
+
+    handleKeyPressPlayer2(options) {
+        if (options.arrowLeft.pressed) {
+            this.velocityX = -3;
+        } else if (options.arrowRight.pressed) {
+            this.velocityX = 3;
+        } else {
+            this.velocityX = 0;
+        }
+        if (options.arrowUp.pressed) {
             this.jump();
         }
     }
@@ -46,9 +57,13 @@ class Player {
         this.drawPlayer();
         this.addGravity();
     
-        if (keys.space.pressed) {
+        if (keysPlayer1.w.pressed) {
             this.jump();
         }
+        else if (keysPlayer2.arrowUp.pressed) {
+            this.jump();
+        }
+
     
         this.checkFloorCollision();
         this.checkPlatformCollision();
@@ -63,7 +78,6 @@ class Player {
 
     jump() {
         if (!this.isMidAir && (this.isOnFloor() || this.isOnPlatform())) {
-            console.log("jumping");
             this.velocityY = -7;
             this.isMidAir = true;
         }
@@ -142,13 +156,11 @@ class Player {
         return false; // Return false if no collision was found.
     }
     
-    
     addGravity() {  
         if (!this.isOnPlatform() && !this.isOnFloor()) {
             this.velocityY += gravity;
         }
     }
-    
 
     drawPlayer() {
         const currentFrameX = this.currentFrame * this.spriteWidth;

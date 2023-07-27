@@ -51,7 +51,19 @@ const player1 = new Player({
     y: 200,
     width: 20,
     height: 20,
-    spriteSrc: "img/characters/pinkMonster/Pink_Monster_Idle_4.png",
+    spriteSrc: "img/characters/pink/Pink_Monster_Idle_4.png",
+    spriteWidth: 32,
+    spriteHeight: 32,
+    totalFrames: 4,
+    animationSpeed: 10,
+});
+
+const player2 = new Player({
+    x: 600,
+    y: 200,
+    width: 20,
+    height: 20,
+    spriteSrc: "img/characters/owlet/Owlet_Monster_Idle_4.png",
     spriteWidth: 32,
     spriteHeight: 32,
     totalFrames: 4,
@@ -64,28 +76,43 @@ let currentFrame = 0;
 // Add a new property to keep track of the animation frame counter
 let frameCounter = 0;
 
-const keys = {
-    d: {
-        pressed: false,
-    },
+const keysPlayer1 = {
     a: {
         pressed: false,
     },
-    space: {
+    d: {
+        pressed: false,
+    },
+    w: {
         pressed: false,
     },
 };
+
+const keysPlayer2 = {
+    arrowLeft: {
+        pressed: false,
+    },
+    arrowRight: {
+        pressed: false,
+    },
+    arrowUp: {
+        pressed: false,
+    },
+};
+
 function gameLoop() {
-    updateGameState();             // 2. Update Game State
-    draw();                        // 3. Render
+    updateGameState();
+    draw();                        
     requestAnimationFrame(gameLoop);
 }
 
 function updateGameState() {
-    player1.handleKeyPress(keys);  // 1. Handle Player Input
+    player1.handleKeyPressPlayer1(keysPlayer1);
     player1.updatePosition();
     player1.updateAnimation();
-    // any other game state updates
+    player2.handleKeyPressPlayer2(keysPlayer2);
+    player2.updatePosition();
+    player2.updateAnimation();
 }
 
 function draw() {
@@ -93,6 +120,7 @@ function draw() {
     
     backgroundImage.drawBackground();
     player1.drawPlayer();
+    player2.drawPlayer();
     
     floorCollisionBlocks.forEach(collisionBlock => {
         const collisionBlockScale = backgroundImage.scale;
@@ -104,34 +132,50 @@ function draw() {
     });
 }
 
-
-
-
 // Start the continuous game loop
 requestAnimationFrame(gameLoop);
 
-
 document.addEventListener("keydown", function (event) {
     if (event.code === "KeyA") {
-        keys.a.pressed = true;
+        keysPlayer1.a.pressed = true;
     } else if (event.code === "KeyD") {
-        keys.d.pressed = true;
+        keysPlayer1.d.pressed = true;
     }
-    if (event.code === "Space") {
-        keys.space.pressed = true;
+    if (event.code === "KeyW") {
+        keysPlayer1.w.pressed = true;
     }
 });
 
-
-// Eventlistener for key releases
 document.addEventListener("keyup", function (event) {
     if (event.code === "KeyA") {
-        keys.a.pressed = false;
+        keysPlayer1.a.pressed = false;
     } else if (event.code === "KeyD") {
-        keys.d.pressed = false;
+        keysPlayer1.d.pressed = false;
     }
-    if (event.code === "Space") {
-        keys.space.pressed = false;
+    if (event.code === "KeyW") {
+        keysPlayer1.w.pressed = false;
+    }
+});
+
+document.addEventListener("keydown", function (event) {
+    if (event.code === "ArrowLeft") {
+        keysPlayer2.arrowLeft.pressed = true;
+    } else if (event.code === "ArrowRight") {
+        keysPlayer2.arrowRight.pressed = true;
+    }
+    if (event.code === "ArrowUp") {
+        keysPlayer2.arrowUp.pressed = true;
+    }
+});
+
+document.addEventListener("keyup", function (event) {
+    if (event.code === "ArrowLeft") {
+        keysPlayer2.arrowLeft.pressed = false;
+    } else if (event.code === "ArrowRight") {
+        keysPlayer2.arrowRight.pressed = false;
+    }
+    if (event.code === "ArrowUp") {
+        keysPlayer2.arrowUp.pressed = false;
     }
 });
 
