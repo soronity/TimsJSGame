@@ -1,0 +1,70 @@
+/**
+ * Multiplayer 2D Platformer Game
+ *
+ * Description:
+ * This game features a simple 2D platformer environment where two players can move, jump, and attack 
+ * each other. The game utilizes double buffering to achieve smooth rendering. The objective of the 
+ * game is for one player to reduce the other's health to zero.
+ * 
+ * Features:
+ * - Two playable characters with distinct sprites for movement and idling.
+ * - Physics system with gravity.
+ * - Health system with visible health bars for each player.
+ * - Collision detection with floor and platforms.
+ * - Keyboard controls for movement and attack.
+ * - Restart capability upon game over.
+ * 
+ * Classes and Major Components:
+ * - Player: Handles player attributes like health, position, and sprite animation.
+ * - Background: Manages the rendering of the game's background.
+ * - CollisionBlock: Represents sections of the level where player collision should occur.
+ * 
+ * Game Flow:
+ * 1. Initialize canvas, assets, and game entities.
+ * 2. Preload all necessary sprites and images.
+ * 3. Initiate the main game loop, where the game state is updated and rendered.
+ * 4. Listen for keyboard events to handle player input.
+ * 5. Upon game over, display the option to restart the game.
+ * 
+ * Dependencies:
+ * This game is built using vanilla JavaScript and the Canvas API.
+ *  * 
+ * Credits:
+ * Game developed by Tim White (www.github.com/timewhite)
+ * Special thanks to ChatGPT for assistance in troubleshooting and optimization.
+ *
+ * Last Updated: [28/7-23]
+ */
+
+
+/**
+ * Player Class
+ *
+ * Description:
+ * The Player class is designed to handle individual player entities in the game, 
+ * managing attributes like position, health, sprite, and movement behaviors.
+ *
+ * Attributes:
+ * - x, y: The coordinates of the player on the canvas.
+ * - width, height: Dimensions of the player's hitbox.
+ * - idleSpriteSrc, runSpriteSrc: Source paths for the player's idle and running animation sprites.
+ * - spriteWidth, spriteHeight: Dimensions of individual sprite frames.
+ * - totalFrames: The number of frames in the animation sprite.
+ * - animationSpeed: The speed at which the sprite animation cycles.
+ * - id: A unique identifier for the player (e.g., "Pink wins <3").
+ * - direction: Indicates the facing direction of the player ("left" or "right").
+ * - health (not explicitly defined in provided code): Represents the player's current health status.
+ *
+ * Methods:
+ * - handleKeyPress(): Reacts to keypress inputs specific to the player.
+ * - updatePosition(): Updates the player's position on the canvas based on movement inputs.
+ * - updateAnimation(): Manages the sprite animation states and transitions.
+ * - drawPlayer(): Renders the player's sprite on the canvas.
+ * - attack(): Executes an attack action towards the other player.
+ *
+ * Usage:
+ * To instantiate a new player, provide an options object with the necessary attributes. 
+ *
+ * Dependencies:
+ * This class relies on the Canvas API for rendering purposes.
+ */

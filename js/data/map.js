@@ -1,3 +1,27 @@
+/**
+ * TileMap Configuration File
+ * 
+ * This file was generated using the Tiled software, where the game's background
+ * image was crafted. It represents the structural layout of tiles, using data 
+ * arrays to pinpoint the precise positioning and type of every tile on the map.
+ * 
+ * The map comprises multiple layers, with the primary layer being the "background."
+ * Furthermore, the file ensures compatibility with common JS module patterns, 
+ * enabling it to be effortlessly integrated into various game engines and platforms.
+ * 
+ * It's crucial not to alter the file manually unless you understand its structure, 
+ * as this can disrupt the rendering of the game's background.
+ * 
+ * Map Details:
+ * - Dimensions: 20x30 tiles
+ * - Infinite: No
+ * - Compression Level: -1 (No Compression)
+ * - Primary Layer: "background"
+ * 
+ * For a clearer and deeper understanding of this configuration, refer to Tiled's documentation.
+ */
+
+
 (function(name,data){
  if(typeof onTileMapLoaded === 'undefined') {
   if(typeof TileMaps === 'undefined') TileMaps = {};

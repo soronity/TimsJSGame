@@ -74,12 +74,6 @@ class Player {
     updatePosition(options) {
         this.addGravity();
     
-        if (options.w && options.w.pressed) { 
-            this.jump();
-        } else if (options.arrowUp && options.arrowUp.pressed) { 
-            this.jump();
-        }
-    
         this.checkFloorCollision();
         this.checkPlatformCollision();
     
@@ -172,7 +166,6 @@ class Player {
             opponent.takeDamage(10);
             this.checkForGameOver();
         }
-        this.checkForGameOver(); // Add this line to check for game over after each attack
     }
     
     
@@ -237,7 +230,7 @@ class Player {
     drawPlayer() {
         let spriteToUse = this.idleSprite;
         let currentFrameX;
-    
+        
         if (this.velocityX !== 0) {
             spriteToUse = this.runSprite;
         }
@@ -250,33 +243,47 @@ class Player {
         if (this.direction === 'left') {
             ctx.translate(this.x + this.width, this.y); // Move the origin to the right side of the player
             ctx.scale(-1, 1); // Flip horizontally
-            ctx.drawImage(
-                spriteToUse,
-                currentFrameX,
-                0,
-                this.spriteWidth,
-                this.spriteHeight,
-                0, // Adjust the x position
-                0, // Adjust the y position
-                this.width,
-                this.height
-            );
+    
+            if (spriteToUse.complete) {  // Check if the image has been loaded
+                ctx.drawImage(
+                    spriteToUse,
+                    currentFrameX,
+                    0,
+                    this.spriteWidth,
+                    this.spriteHeight,
+                    0, // Adjust the x position
+                    0, // Adjust the y position
+                    this.width,
+                    this.height
+                );
+            } else {
+                // Fallback: Draw a red rectangle as an error indicator
+                ctx.fillStyle = 'red';
+                ctx.fillRect(0, 0, this.width, this.height);
+            }
         } else {
-            ctx.drawImage(
-                spriteToUse,
-                currentFrameX,
-                0,
-                this.spriteWidth,
-                this.spriteHeight,
-                this.x,
-                this.y,
-                this.width,
-                this.height
-            );
+            if (spriteToUse.complete) {  // Check if the image has been loaded
+                ctx.drawImage(
+                    spriteToUse,
+                    currentFrameX,
+                    0,
+                    this.spriteWidth,
+                    this.spriteHeight,
+                    this.x,
+                    this.y,
+                    this.width,
+                    this.height
+                );
+            } else {
+                // Fallback: Draw a red rectangle as an error indicator
+                ctx.fillStyle = 'red';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
         }
         
         ctx.restore(); // Restore the canvas to its previous state
     }
+    
    
 
     updateAnimation() {

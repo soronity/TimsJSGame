@@ -1,8 +1,46 @@
-//TODO få hjälp med att skapa en bra text där jag skriver att jag fått hjälp från chatgpt
+/**
+ * Multiplayer 2D Platformer Game
+ *
+ * Description:
+ * This game features a simple 2D platformer environment where two players can move, jump, and attack 
+ * each other. The game utilizes double buffering to achieve smooth rendering. The objective of the 
+ * game is for one player to reduce the other's health to zero.
+ * 
+ * Features:
+ * - Two playable characters with distinct sprites for movement and idling.
+ * - Physics system with gravity.
+ * - Health system with visible health bars for each player.
+ * - Collision detection with floor and platforms.
+ * - Keyboard controls for movement and attack.
+ * - Restart capability upon game over.
+ * 
+ * Classes and Major Components:
+ * - Player: Handles player attributes like health, position, and sprite animation.
+ * - Background: Manages the rendering of the game's background.
+ * - CollisionBlock: Represents sections of the level where player collision should occur.
+ * 
+ * Game Flow:
+ * 1. Initialize canvas, assets, and game entities.
+ * 2. Preload all necessary sprites and images.
+ * 3. Initiate the main game loop, where the game state is updated and rendered.
+ * 4. Listen for keyboard events to handle player input.
+ * 5. Upon game over, display the option to restart the game.
+ * 
+ * Dependencies:
+ * This game is built using vanilla JavaScript and the Canvas API.
+ *  * 
+ * Credits:
+ * Game developed by Tim White (www.github.com/timewhite)
+ * Special thanks to ChatGPT for assistance in troubleshooting and optimization.
+ *
+ * Last Updated: [28/7-23]
+ */
+
 // Get the canvas elements
 const canvas = document.getElementById("gameCanvas");
 const hiddenCanvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
+//Create hidden canvas for double buffering
 const hiddenCtx = hiddenCanvas.getContext("2d");
 
 // Set the size of the visible canvas
@@ -55,6 +93,15 @@ function initializeCollisionBlocks(collisionsData, collisionBlockNumber) {
 const floorCollisionBlocks = initializeCollisionBlocks(floorCollisions, collisionBlockNumber);
 const platformCollisionBlocks = initializeCollisionBlocks(platformCollisions, collisionBlockNumber);
 
+function collision({ player, collisionBlock }) {
+    return (
+        player.y + player.height > collisionBlock.position.y &&
+        player.y < collisionBlock.position.y + collisionBlock.height &&
+        player.x < collisionBlock.position.x + collisionBlock.width &&
+        player.x + player.width > collisionBlock.position.x
+    );
+}
+
 const player1 = new Player({
     x: 100,
     y: 200,
@@ -66,7 +113,7 @@ const player1 = new Player({
     spriteHeight: 32,
     totalFrames: 4,
     animationSpeed: 10,
-    id: "Pink wins <333",
+    id: "Pink wins <3",
     direction: "left"
 });
 
@@ -81,7 +128,7 @@ const player2 = new Player({
     spriteHeight: 32,
     totalFrames: 4,
     animationSpeed: 10,
-    id: "Owlet wins XD",
+    id: "Owlet wins <3",
     direction: "right",
 });
 
@@ -169,20 +216,20 @@ function draw() {
 
 
 function drawHealthBar(player, x, y, width, height) {
-    ctx.save();
-    ctx.fillStyle = '#FF0000'; // color for the background of the health bar
-    ctx.fillRect(x, y, width, height);
+    hiddenCtx.save();
+    hiddenCtx.fillStyle = '#FF0000'; // color for the background of the health bar
+    hiddenCtx.fillRect(x, y, width, height);
 
     const healthPercentage = player.health / player.maxHealth;
-    ctx.fillStyle = player.health > 0 ? '#00FF00' : '#FF0000'; // color for the actual health
-    ctx.fillRect(x, y, width * healthPercentage, height);
+    hiddenCtx.fillStyle = player.health > 0 ? '#00FF00' : '#FF0000'; // color for the actual health
+    hiddenCtx.fillRect(x, y, width * healthPercentage, height);
 
     // Add the black outline
-    ctx.strokeStyle = 'black'; // color for the outline
-    ctx.lineWidth = 2; // thickness of the outline
-    ctx.strokeRect(x, y, width, height);
+    hiddenCtx.strokeStyle = 'black'; // color for the outline
+    hiddenCtx.lineWidth = 2; // thickness of the outline
+    hiddenCtx.strokeRect(x, y, width, height);
 
-    ctx.restore();
+    hiddenCtx.restore();
 }
 
 
@@ -192,7 +239,7 @@ function drawMessage(message) {
     ctx.fillStyle = "black";  // Text color
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(message, canvas.width / 2, canvas.height / 2 - 35);  // Move 15 pixels below center
+    ctx.fillText(message, canvas.width / 2, canvas.height / 2 - 30);  // Move 15 pixels below center
     ctx.restore();
 }
 
@@ -213,7 +260,7 @@ function drawRestartMessage() {
     ctx.fillStyle = "black";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Press SPACE to restart", canvas.width / 2, canvas.height / 2 + 35);
+    ctx.fillText("Press SPACE to play again!!", canvas.width / 2, canvas.height / 2 + 35);
     ctx.restore();
 }
 
