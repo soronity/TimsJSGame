@@ -14,7 +14,7 @@ hiddenCanvas.width = canvas.width;
 hiddenCanvas.height = canvas.height;
 
 const gravity = 0.3;
-
+const animationSpeed = 10;
 
 const backgroundImage = new Background({
     position: {
@@ -27,6 +27,7 @@ const backgroundImage = new Background({
 
 const collisionBlockNumber = 243;
 
+//TODO flytta ut till en annan fil
 function initializeCollisionBlocks(collisionsData, collisionBlockNumber) {
     const collisions2DArray = [];
     for (let i = 0; i < collisionsData.length; i += 30) {
@@ -55,6 +56,7 @@ function initializeCollisionBlocks(collisionsData, collisionBlockNumber) {
 const floorCollisionBlocks = initializeCollisionBlocks(floorCollisions, collisionBlockNumber);
 const platformCollisionBlocks = initializeCollisionBlocks(platformCollisions, collisionBlockNumber);
 
+//TODO flytta ut till en annan fil
 function collision({ player, collisionBlock }) {
     return (
         player.y + player.height > collisionBlock.position.y &&
@@ -64,32 +66,29 @@ function collision({ player, collisionBlock }) {
     );
 }
 
-const player1 = new Player({
+let preloadedPinkMonsterSprites = preloadImages(pinkMonsterAnimations);
+let preloadedOwletSprites = preloadImages(owletAnimations);
+
+const pinkMonster = new Player({
     x: 100,
     y: 200,
     width: 20,
     height: 20,
-    idleSpriteSrc: "img/characters/pink/Pink_Monster_Idle_4.png",
-    runSpriteSrc: "img/characters/pink/Pink_Monster_Run_6.png",
+    sprites: preloadedPinkMonsterSprites,
     spriteWidth: 32,
     spriteHeight: 32,
-    totalFrames: 4,
-    animationSpeed: 10,
     id: "Pink wins <3",
     direction: "left"
 });
 
-const player2 = new Player({
+const owlet = new Player({
     x: 600,
     y: 200,
     width: 20,
     height: 20,
-    idleSpriteSrc: "img/characters/owlet/Owlet_Monster_Idle_4.png",
-    runSpriteSrc: "img/characters/owlet/Owlet_Monster_Run_6.png",
+    sprites: preloadedOwletSprites,
     spriteWidth: 32,
     spriteHeight: 32,
-    totalFrames: 4,
-    animationSpeed: 10,
     id: "Owlet wins <3",
     direction: "right",
 });
@@ -101,13 +100,13 @@ let currentFrame = 0;
 let frameCounter = 0;
 
 const keys = {
-    player1: {
+    pinkMonster: {
         a: { pressed: false },
         d: { pressed: false },
         w: { pressed: false },
         s: { pressed: false } // Attack key for Player 1
     },
-    player2: {
+    owlet: {
         arrowLeft: { pressed: false },
         arrowRight: { pressed: false },
         arrowUp: { pressed: false },
@@ -130,7 +129,7 @@ function gameLoop() {
     ctx.drawImage(hiddenCanvas, 0, 0);
     
     // Even if the game is over, we'll keep drawing until the winner message is displayed.
-    if (!gameOver || (player1.health > 0 && player2.health > 0)) {
+    if (!gameOver || (pinkMonster.health > 0 && owlet.health > 0)) {
         requestAnimationFrame(gameLoop);
     }
 }
@@ -138,13 +137,13 @@ function gameLoop() {
 
 
 function updateGameState() {
-    player1.handleKeyPress(keys.player1);
-    player1.updatePosition(keys.player1);
-    player1.updateAnimation();
+    pinkMonster.handleKeyPress(keys.pinkMonster);
+    pinkMonster.updatePosition();
+    pinkMonster.updateAnimation();
 
-    player2.handleKeyPress(keys.player2);
-    player2.updatePosition(keys.player2);
-    player2.updateAnimation();
+    owlet.handleKeyPress(keys.owlet);
+    owlet.updatePosition();
+    owlet.updateAnimation();
 }
 
 
@@ -167,12 +166,12 @@ function draw() {
     });
 
     // Draw the players
-    player1.drawPlayer(hiddenCtx);
-    player2.drawPlayer(hiddenCtx);
+    pinkMonster.drawPlayer(hiddenCtx);
+    owlet.drawPlayer(hiddenCtx);
 
     // Draw health bars on top of the players
-    drawHealthBar(player1, 10, 10, 100, 10, hiddenCtx);
-    drawHealthBar(player2, canvas.width - 100, 10, 100, 10, hiddenCtx);
+    drawHealthBar(pinkMonster, 10, 10, 100, 10, hiddenCtx);
+    drawHealthBar(owlet, canvas.width - 100, 10, 100, 10, hiddenCtx);
 }
 
 
@@ -206,12 +205,12 @@ function drawMessage(message) {
 }
 
 function restartGame() {
-    player1.health = 100;
-    player2.health = 100;
-    player1.x = 100;
-    player1.y = 200;
-    player2.x = 600;
-    player2.y = 200;
+    pinkMonster.health = 100;
+    owlet.health = 100;
+    pinkMonster.x = 100;
+    pinkMonster.y = 200;
+    owlet.x = 600;
+    owlet.y = 200;
     gameOver = false;
     requestAnimationFrame(gameLoop);
 }
@@ -229,6 +228,7 @@ function drawRestartMessage() {
 // Start the continuous game loop
 requestAnimationFrame(gameLoop);
 
+//TODO separate file for eventlisteners and updatekeys
 document.addEventListener("keydown", function (event) {
     updateKeyPressedState(event.code, true);
 });
@@ -241,32 +241,32 @@ document.addEventListener("keyup", function (event) {
 function updateKeyPressedState(code, isPressed) {
     // Player 1 controls
     if (code === "KeyA") {
-        keys.player1.a.pressed = isPressed;
+        keys.pinkMonster.a.pressed = isPressed;
     } else if (code === "KeyD") {
-        keys.player1.d.pressed = isPressed;
+        keys.pinkMonster.d.pressed = isPressed;
     } else if (code === "KeyW") {
-        keys.player1.w.pressed = isPressed;
+        keys.pinkMonster.w.pressed = isPressed;
     }
 
     // Player 2 controls
     if (code === "ArrowLeft") {
-        keys.player2.arrowLeft.pressed = isPressed;
+        keys.owlet.arrowLeft.pressed = isPressed;
     } else if (code === "ArrowRight") {
-        keys.player2.arrowRight.pressed = isPressed;
+        keys.owlet.arrowRight.pressed = isPressed;
     } else if (code === "ArrowUp") {
-        keys.player2.arrowUp.pressed = isPressed;
+        keys.owlet.arrowUp.pressed = isPressed;
     }
 
     // Player 1 attack
     if (code === "KeyS") {
-        keys.player1.s.pressed = isPressed;
-        if (isPressed) player1.attack(player2); // If the attack key is pressed, call attack
+        keys.pinkMonster.s.pressed = isPressed;
+        if (isPressed) pinkMonster.attack(owlet); // If the attack key is pressed, call attack
     }
 
     // Player 2 attack
     if (code === "ArrowDown") {
-        keys.player2.arrowDown.pressed = isPressed;
-        if (isPressed) player2.attack(player1); // If the attack key is pressed, call attack
+        keys.owlet.arrowDown.pressed = isPressed;
+        if (isPressed) owlet.attack(pinkMonster); // If the attack key is pressed, call attack
     }
 
     if (code === "Space" && isPressed && gameOver) {

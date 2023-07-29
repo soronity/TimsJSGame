@@ -4,12 +4,9 @@ class Player {
         y,
         width,
         height,
-        idleSpriteSrc,
-        runSpriteSrc,
+        sprites,
         spriteWidth,
         spriteHeight,
-        totalFrames,
-        animationSpeed,
         id,
         direction,
     }) {
@@ -20,14 +17,9 @@ class Player {
         this.velocityY = 0;
         this.velocityX = 0;
         this.isMidAir = false;
-        this.idleSprite = new Image();
-        this.idleSprite.src = idleSpriteSrc;
-        this.runSprite = new Image();
-        this.runSprite.src = runSpriteSrc;
         this.spriteWidth = spriteWidth;
         this.spriteHeight = spriteHeight;
-        this.totalFrames = totalFrames;
-        this.animationSpeed = animationSpeed;
+        this.sprites = sprites;
         this.currentFrame = 0;
         this.frameCounter = 0;
         this.direction = direction; // left or right
@@ -45,8 +37,7 @@ class Player {
             get y() {
                 return player.y + player.height / 2 - this.height / 2;
             }
-        };
-        
+        }; 
         this.health = 100;
         this.maxHealth = 100;
         this.id = id;
@@ -63,7 +54,6 @@ class Player {
             this.velocityX = 0;
         }
         
-    
         if (options.w && options.w.pressed) { 
             this.jump();
         } else if (options.arrowUp && options.arrowUp.pressed) { 
@@ -71,7 +61,7 @@ class Player {
         }
     }
     
-    updatePosition(options) {
+    updatePosition() {
         this.addGravity();
     
         this.checkFloorCollision();
@@ -93,7 +83,6 @@ class Player {
     }
     
     isOnPlatform() {
-        const playerBottom = this.y + this.height;
         for (const block of platformCollisionBlocks) {
             if (this.velocityY > 0 && this.collidesWith(block)) {
                 const previousPlayerBottom = this.y + this.height - this.velocityY;
@@ -175,9 +164,9 @@ class Player {
     }
 
     checkForGameOver() {
-        if (player1.health <= 0 || player2.health <= 0) {
+        if (pinkMonster.health <= 0 || owlet.health <= 0) {
             // Determine winner based on health
-            let winner = player1.health > player2.health ? player1.id : player2.id;
+            let winner = pinkMonster.health > owlet.health ? pinkMonster.id : owlet.id;
             gameOver = true;
     
             // Delay the winner message by a short period (e.g., 1 second)
@@ -228,14 +217,15 @@ class Player {
     }
 
     drawPlayer() {
-        let spriteToUse = this.idleSprite;
-        let currentFrameX;
-        
+        //TODO separat function chooseSpi
+        let spriteToUse = this.sprites.idle;
+
         if (this.velocityX !== 0) {
-            spriteToUse = this.runSprite;
+            spriteToUse = this.sprites.run;
+            //TODO if attacking and running, use that sprite
         }
         
-        currentFrameX = this.currentFrame * this.spriteWidth;
+        let currentFrameX = this.currentFrame * this.spriteWidth;
         
         ctx.save(); // Save the current state of the canvas
         
@@ -243,7 +233,6 @@ class Player {
         if (this.direction === 'left') {
             ctx.translate(this.x + this.width, this.y); // Move the origin to the right side of the player
             ctx.scale(-1, 1); // Flip horizontally
-    
             if (spriteToUse.complete) {  // Check if the image has been loaded
                 ctx.drawImage(
                     spriteToUse,
@@ -284,14 +273,18 @@ class Player {
         ctx.restore(); // Restore the canvas to its previous state
     }
     
-   
-
     updateAnimation() {
-        // If player is moving, use the running animation frame count
-        const maxFrames = this.velocityX !== 0 ? 6 : 4;  // 6 frames for running, 4 for idle
+        let maxFrames = this.velocityX !== 0 ? 6 : 4; 
+        // if (this.velocityY !== 0) {
+        //     maxFrames = 8;
+        // }
+        //TODO isDead animation med flagga?
+        //else if (isDead) {
+        //  maxFrames = 8; 
+        //}
     
         this.frameCounter++;
-        if (this.frameCounter >= this.animationSpeed) {
+        if (this.frameCounter >= animationSpeed) {
             this.frameCounter = 0;
             this.currentFrame = (this.currentFrame + 1) % maxFrames;
         }
