@@ -154,6 +154,8 @@ function gameLoop() {
   }
 }
 
+requestAnimationFrame(gameLoop);
+
 function updateGameState() {
   if (pinkMonster && pinkMonster.handleKeyPress) {
     pinkMonster.handleKeyPress(keys.pinkMonster);
@@ -250,15 +252,6 @@ function drawRestartMessage() {
   ctx.restore();
 }
 
-//TODO separate file for eventlisteners and updatekeys
-document.addEventListener("keydown", function (event) {
-  updateKeyPressedState(event.code, true);
-});
-
-document.addEventListener("keyup", function (event) {
-  updateKeyPressedState(event.code, false);
-});
-
 function updateKeyPressedState(code, isPressed) {
   // Player 1 controls
   if (code === "KeyA") {
@@ -294,3 +287,12 @@ function updateKeyPressedState(code, isPressed) {
     restartGame();
   }
 }
+
+//TODO separate file for eventlisteners and updatekeys
+document.addEventListener("keydown", function (event) {
+  updateKeyPressedState(event.code, true);
+});
+
+document.addEventListener("keyup", function (event) {
+  updateKeyPressedState(event.code, false);
+});
