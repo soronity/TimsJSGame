@@ -48,13 +48,13 @@ class Player {
       (options.a && options.a.pressed) ||
       (options.arrowLeft && options.arrowLeft.pressed)
     ) {
-      this.velocityX = -1;
+      this.velocityX = -2;
       this.direction = "left";
     } else if (
       (options.d && options.d.pressed) ||
       (options.arrowRight && options.arrowRight.pressed)
     ) {
-      this.velocityX = 1;
+      this.velocityX = 2;
       this.direction = "right";
     } else {
       this.velocityX = 0;
@@ -83,7 +83,7 @@ class Player {
 
   jump() {
     if (!this.isMidAir && (this.isOnFloor() || this.isOnPlatform())) {
-      this.velocityY = -4;
+      this.velocityY = -7;
       this.isMidAir = true;
     }
   }
@@ -172,7 +172,7 @@ class Player {
       // Determine winner based on health
       let winner =
         pinkMonster.health > owlet.health ? pinkMonster.id : owlet.id;
-      gameOver = true;
+      gameState = "gameOver";
 
       // Delay the winner message by a short period (e.g., 1 second)
       setTimeout(() => {
@@ -222,12 +222,12 @@ class Player {
   }
 
   drawPlayer() {
-    //TODO separat function chooseSpi
+    //TODO make a separate function chooseSprite
     let spriteToUse = this.sprites.idle;
 
     if (this.velocityX !== 0) {
       spriteToUse = this.sprites.run;
-      //TODO if attacking and running, use that sprite
+      //TODO if attacking and running, use that sprite, etc
     }
 
     let currentFrameX = this.currentFrame * this.spriteWidth;
@@ -257,6 +257,7 @@ class Player {
         ctx.fillRect(0, 0, this.width, this.height);
       }
     } else {
+      // Draw the player facing right
       if (spriteToUse.complete) {
         // Check if the image has been loaded
         ctx.drawImage(
@@ -285,8 +286,8 @@ class Player {
     // if (this.velocityY !== 0) {
     //     maxFrames = 8;
     // }
-    //TODO isDead animation med flagga?
-    //else if (isDead) {
+    //TODO isDead animation with global isDead flag? Eller använd gameOver helt enkelt
+    //else if (gameOvver) {
     //  maxFrames = 8;
     //}
 

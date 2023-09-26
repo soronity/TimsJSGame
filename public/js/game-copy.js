@@ -16,7 +16,16 @@ hiddenCanvas.height = canvas.height;
 
 const gravity = 0.3;
 const animationSpeed = 12;
-let gameState = "intro";
+
+// Define game states
+const GAME_STATES = {
+  INTRO: "INTRO",
+  RUNNING: "RUNNING",
+};
+
+// Initialize game state to INTRO
+let gameState = GAME_STATES.INTRO;
+let gameOver = false;
 
 const backgroundImage = new Background({
   position: {
@@ -138,27 +147,29 @@ const keys = {
   },
 };
 
-let gameOver = false;
 
+// Modify your gameLoop function
 function gameLoop() {
-  updateGameState();
-
   // Clear the visible canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Draw the game elements on the hidden canvas
-  draw();
+  console.log("Game state: ", gameState); // Add this
 
-  // Copy the hidden canvas to the visible canvas
-  ctx.drawImage(hiddenCanvas, 0, 0);
-
-  // Even if the game is over, we'll keep drawing until the winner message is displayed.
-  if (!gameOver || (pinkMonster.health > 0 && owlet.health > 0)) {
-    requestAnimationFrame(gameLoop);
+  if (gameState == GAME_STATES.RUNNING) {
+    console.log("Game is running, finally!"); // Add this
+    updateGameState();
+    draw();
   }
+  else {
+    drawIntroScreen();
+  }
+
+  requestAnimationFrame(gameLoop);
+
 }
 
 function updateGameState() {
+  console.log("Game is running!"); // Add this
   pinkMonster.handleKeyPress(keys.pinkMonster);
   pinkMonster.updatePosition();
   pinkMonster.updateAnimation();
@@ -166,6 +177,16 @@ function updateGameState() {
   owlet.handleKeyPress(keys.owlet);
   owlet.updatePosition();
   owlet.updateAnimation();
+}
+
+// Draw the intro screen
+function drawIntroScreen() {
+  ctx.save();
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "black";
+  ctx.textAlign = "center";
+  ctx.fillText("Press ENTER to start the game", canvas.width / 2, canvas.height / 2);
+  ctx.restore();
 }
 
 function draw() {
@@ -228,7 +249,7 @@ function restartGame() {
   pinkMonster.y = 200;
   owlet.x = 600;
   owlet.y = 200;
-  gameOver = false;
+  gameOver = true;
   requestAnimationFrame(gameLoop);
 }
 
@@ -277,15 +298,21 @@ function updateKeyPressedState(code, isPressed) {
     if (isPressed) owlet.attack(pinkMonster); // If the attack key is pressed, call attack
   }
 
-  if (code === "Space" && isPressed && gameOver) {
+  if ((code === "Space") && isPressed && (gameOver == true)) {
     restartGame();
   }
 }
 
 //TODO separate file for eventlisteners and updatekeys
 document.addEventListener("keydown", function (event) {
+  if (event.code === "Enter" && gameState === GAME_STATES.INTRO) {
+    gameState = GAME_STATES.RUNNING;
+    console.log("Game is running after enter is pressed");
+    console.log("Game state: ", gameState);
+  }
   updateKeyPressedState(event.code, true);
 });
+
 
 document.addEventListener("keyup", function (event) {
   updateKeyPressedState(event.code, false);
