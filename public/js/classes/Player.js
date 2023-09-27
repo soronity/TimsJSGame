@@ -227,12 +227,15 @@ class Player {
     if (gameOver) {
       spriteToUse = this.sprites.death;
     }
-    else if (this.velocityX !== 0 && this.velocityY === 0) {
+    else if (this.velocityX !== 0 && this.velocityY < 0.5) {
       spriteToUse = this.sprites.run;
     }
-    else if (this.velocityY !== 0) {
+    else if (this.velocityY > 0.5) {
       spriteToUse = this.sprites.jump;
     }
+
+    console.log(spriteToUse);
+
 
     let currentFrameX = this.currentFrame * this.spriteWidth;
 
@@ -292,7 +295,7 @@ class Player {
     //or 8 for jumping animation
     if (!gameOver) {
       maxFrames = this.velocityX !== 0 ? 6 : 4;
-      if (this.velocityY !== 0) {
+      if (this.velocityY > 0.5) {
         maxFrames = 8;
       }
     }

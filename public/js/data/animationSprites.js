@@ -53,10 +53,14 @@ const owletAnimations = {
     spriteSrc: "img/characters/owlet/Owlet_Monster_Run_6.png",
     totalFrames: 6,
   },
-  // jump: {
-  //     spriteSrc: "img/characters/owlet/Owlet_Jump.png",
-  //     totalFrames: 4,
-  // },
+  death: {
+   spriteSrc: "img/characters/owlet/Owlet_Monster_Death_8.png",
+   totalFrames: 5,
+  },
+  jump: {
+    spriteSrc: "img/characters/owlet/Owlet_Monster_Jump_8.png",
+    totalFrames: 8,
+  },
   // idle_attack: {
   //     spriteSrc: "img/characters/owlet/Owlet_Idle_Attack.png",
   //     totalFrames: 4,
@@ -64,10 +68,6 @@ const owletAnimations = {
   // run_attack: {
   //     spriteSrc: "img/characters/owlet/Owlet_Run_Attack.png",
   //     totalFrames: 6,
-  // },
-  // death: {
-  //     spriteSrc: "img/characters/owlet/Owlet_Death.png",
-  //     totalFrames: 5,
   // },
   // dust: {
   //     spriteSrc: "img/characters/owlet/Owlet_Dust.png",
