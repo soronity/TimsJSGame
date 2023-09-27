@@ -172,15 +172,12 @@ class Player {
       // Determine winner based on health
       let winner =
         pinkMonster.health > owlet.health ? pinkMonster.id : owlet.id;
-      gameState = "gameOver";
 
       // Delay the winner message by a short period (e.g., 1 second)
-      setTimeout(() => {
-        alert(winner);
-        drawMessage(winner);
-        drawRestartMessage();
-      }, 1000);
+      drawMessage(winner);
+      gameOver = true;
     }
+
   }
 
   checkFloorCollision() {

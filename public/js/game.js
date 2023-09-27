@@ -16,7 +16,10 @@ hiddenCanvas.height = canvas.height;
 
 const gravity = 0.3;
 const animationSpeed = 12;
-let gameState = "intro";
+
+// Initialize game state to INTRO
+let gameStateIntro = true;
+let gameOver = false;
 
 const backgroundImage = new Background({
   position: {
@@ -138,25 +141,28 @@ const keys = {
   },
 };
 
-let gameOver = false;
 
 function gameLoop() {
-  updateGameState();
-
-  // Clear the visible canvas
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Draw the game elements on the hidden canvas
-  draw();
-
-  // Copy the hidden canvas to the visible canvas
-  ctx.drawImage(hiddenCanvas, 0, 0);
-
-  // Even if the game is over, we'll keep drawing until the winner message is displayed.
-  if (!gameOver || (pinkMonster.health > 0 && owlet.health > 0)) {
-    requestAnimationFrame(gameLoop);
+  if (!gameOver) {
+    // Clear the visible canvas only if game isn't over
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
+
+  if (gameOver) {
+    drawRestartMessage();
+    return;
+  }
+  else if (gameStateIntro) {
+    drawIntroScreen();
+  }
+  else {
+    updateGameState();
+    draw();
+  }
+
+  requestAnimationFrame(gameLoop);
 }
+
 
 function updateGameState() {
   pinkMonster.handleKeyPress(keys.pinkMonster);
@@ -166,6 +172,21 @@ function updateGameState() {
   owlet.handleKeyPress(keys.owlet);
   owlet.updatePosition();
   owlet.updateAnimation();
+}
+
+// Draw the intro screen
+function drawIntroScreen() {
+  ctx.save();
+  ctx.font = "15px Arial";
+  ctx.fillStyle = "black";
+  ctx.textAlign = "center";
+  ctx.fillText("Press ENTER to start the game", canvas.width / 2, canvas.height / 1.7);
+  ctx.fillText("Move the players with a, d and arrow keys", canvas.width / 2, canvas.height / 2.2);
+  ctx.fillText("Jump with w and the up arrow", canvas.width / 2, canvas.height / 2.7);
+  ctx.fillText("Attack with s and the down arrow", canvas.width / 2, canvas.height / 3.5);
+  ctx.fillText("Ready to rumble?!", canvas.width / 2, canvas.height / 6);
+
+  ctx.restore();
 }
 
 function draw() {
@@ -189,26 +210,26 @@ function draw() {
   owlet.drawPlayer(hiddenCtx);
 
   // Draw health bars on top of the players
-  drawHealthBar(pinkMonster, 10, 10, 100, 10, hiddenCtx);
-  drawHealthBar(owlet, canvas.width - 100, 10, 100, 10, hiddenCtx);
+  drawHealthBar(pinkMonster, 10, 10, 100, 10, ctx);
+  drawHealthBar(owlet, canvas.width - 100, 10, 100, 10, ctx);
 }
 
-function drawHealthBar(player, x, y, width, height) {
+function drawHealthBar(player, x, y, width, height, ctx) {
   if (!player) return; // if player object is null or undefined, just return
-  hiddenCtx.save();
-  hiddenCtx.fillStyle = "#FF0000"; // color for the background of the health bar
-  hiddenCtx.fillRect(x, y, width, height);
+  ctx.save();
+  ctx.fillStyle = "#FF0000"; // color for the background of the health bar
+  ctx.fillRect(x, y, width, height);
 
   const healthPercentage = player.health / player.maxHealth;
-  hiddenCtx.fillStyle = player.health > 0 ? "#00FF00" : "#FF0000"; // color for the actual health
-  hiddenCtx.fillRect(x, y, width * healthPercentage, height);
+  ctx.fillStyle = player.health > 0 ? "#00FF00" : "#FF0000"; // color for the actual health
+  ctx.fillRect(x, y, width * healthPercentage, height);
 
   // Add the black outline
-  hiddenCtx.strokeStyle = "black"; // color for the outline
-  hiddenCtx.lineWidth = 2; // thickness of the outline
-  hiddenCtx.strokeRect(x, y, width, height);
+  ctx.strokeStyle = "black"; // color for the outline
+  ctx.lineWidth = 2; // thickness of the outline
+  ctx.strokeRect(x, y, width, height);
 
-  hiddenCtx.restore();
+  ctx.restore();
 }
 
 function drawMessage(message) {
@@ -221,17 +242,6 @@ function drawMessage(message) {
   ctx.restore();
 }
 
-function restartGame() {
-  pinkMonster.health = 100;
-  owlet.health = 100;
-  pinkMonster.x = 100;
-  pinkMonster.y = 200;
-  owlet.x = 600;
-  owlet.y = 200;
-  gameOver = false;
-  requestAnimationFrame(gameLoop);
-}
-
 function drawRestartMessage() {
   ctx.save();
   ctx.font = "20px 'Comic Sans MS'";
@@ -242,9 +252,20 @@ function drawRestartMessage() {
     "Press SPACE to play again!!",
     canvas.width / 2,
     canvas.height / 2 + 35
-  );
-  ctx.restore();
-}
+    );
+    ctx.restore();
+  }
+  
+  function restartGame() {
+    pinkMonster.health = 100;
+    owlet.health = 100;
+    pinkMonster.x = 100;
+    pinkMonster.y = 200;
+    owlet.x = 600;
+    owlet.y = 200;
+    gameOver = false;
+    requestAnimationFrame(gameLoop);
+  }
 
 function updateKeyPressedState(code, isPressed) {
   // Player 1 controls
@@ -277,15 +298,19 @@ function updateKeyPressedState(code, isPressed) {
     if (isPressed) owlet.attack(pinkMonster); // If the attack key is pressed, call attack
   }
 
-  if (code === "Space" && isPressed && gameOver) {
+  if ((code === "Space") && isPressed && (gameOver == true)) {
     restartGame();
   }
 }
 
 //TODO separate file for eventlisteners and updatekeys
 document.addEventListener("keydown", function (event) {
+  if (event.code === "Enter" && gameStateIntro == true) {
+    gameStateIntro = false;
+  }
   updateKeyPressedState(event.code, true);
 });
+
 
 document.addEventListener("keyup", function (event) {
   updateKeyPressedState(event.code, false);
