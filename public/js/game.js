@@ -180,11 +180,11 @@ function drawIntroScreen() {
   ctx.font = "15px Arial";
   ctx.fillStyle = "black";
   ctx.textAlign = "center";
-  ctx.fillText("Press ENTER to start the game", canvas.width / 2, canvas.height / 1.7);
-  ctx.fillText("Move the players with a, d and arrow keys", canvas.width / 2, canvas.height / 2.2);
-  ctx.fillText("Jump with w and the up arrow", canvas.width / 2, canvas.height / 2.7);
-  ctx.fillText("Attack with s and the down arrow", canvas.width / 2, canvas.height / 3.5);
   ctx.fillText("Ready to rumble?!", canvas.width / 2, canvas.height / 6);
+  ctx.fillText("Move the players with a, d and arrow keys", canvas.width / 2, canvas.height / 3.5);
+  ctx.fillText("Jump with w and the up arrow", canvas.width / 2, canvas.height / 2.7);
+  ctx.fillText("Attack each other with s and the down arrow", canvas.width / 2, canvas.height / 2.2);
+  ctx.fillText("Press ENTER to start the game", canvas.width / 2, canvas.height / 1.7);
 
   ctx.restore();
 }

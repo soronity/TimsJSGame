@@ -174,8 +174,10 @@ class Player {
         pinkMonster.health > owlet.health ? pinkMonster.id : owlet.id;
 
       // Delay the winner message by a short period (e.g., 1 second)
-      drawMessage(winner);
-      gameOver = true;
+      setTimeout(() => {
+        drawMessage(winner);
+        gameOver = true;
+      }, 1000);
     }
 
   }
