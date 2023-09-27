@@ -14,10 +14,14 @@ const pinkMonsterAnimations = {
     spriteSrc: "img/characters/pink/Pink_Monster_Run_6.png",
     totalFrames: 6,
   },
-  // jump: {
-  //     spriteSrc: "img/characters/pink/Pink_Monster_Jump.png",
-  //     totalFrames: 4,
-  // },
+  death: {
+    spriteSrc: "img/characters/pink/Pink_Monster_Death_8.png",
+    totalFrames: 8,
+  },
+  jump: {
+    spriteSrc: "img/characters/pink/Pink_Monster_Jump_8.png",
+    totalFrames: 8,
+  },
   // idle_attack: {
   //     spriteSrc: "img/characters/pink/Pink_Monster_Idle_Attack.png",
   //     totalFrames: 4,
@@ -25,10 +29,6 @@ const pinkMonsterAnimations = {
   // run_attack: {
   //     spriteSrc: "img/characters/pink/Pink_Monster_Run_Attack.png",
   //     totalFrames: 6,
-  // },
-  // death: {
-  //     spriteSrc: "img/characters/pink/Pink_Monster_Death.png",
-  //     totalFrames: 5,
   // },
   // dust: {
   //     spriteSrc: "img/characters/pink/Pink_Monster_Dust.png",

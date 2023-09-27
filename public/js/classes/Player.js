@@ -224,9 +224,14 @@ class Player {
     //TODO make a separate function chooseSprite
     let spriteToUse = this.sprites.idle;
 
-    if (this.velocityX !== 0) {
+    if (gameOver) {
+      spriteToUse = this.sprites.death;
+    }
+    else if (this.velocityX !== 0 && this.velocityY === 0) {
       spriteToUse = this.sprites.run;
-      //TODO if attacking and running, use that sprite, etc
+    }
+    else if (this.velocityY !== 0) {
+      spriteToUse = this.sprites.jump;
     }
 
     let currentFrameX = this.currentFrame * this.spriteWidth;
@@ -281,16 +286,23 @@ class Player {
   }
 
   updateAnimation() {
-    let maxFrames = this.velocityX !== 0 ? 6 : 4;
-    // if (this.velocityY !== 0) {
-    //     maxFrames = 8;
-    // }
-    //TODO isDead animation with global isDead flag? Eller använd gameOver helt enkelt
-    //else if (gameOvver) {
-    //  maxFrames = 8;
-    //}
+    let maxFrames = 0;
+
+    //If not gameOver then set to 4 for idle, 6 for running 
+    //or 8 for jumping animation
+    if (!gameOver) {
+      maxFrames = this.velocityX !== 0 ? 6 : 4;
+      if (this.velocityY !== 0) {
+        maxFrames = 8;
+      }
+    }
+    //If gameOver then set to 8 for death animation
+    else {
+      maxFrames = 8;
+    }
 
     this.frameCounter++;
+    // Check if the frame counter has reached the animation speed
     if (this.frameCounter >= animationSpeed) {
       this.frameCounter = 0;
       // Update the current frame
