@@ -5,17 +5,23 @@ const ctx = canvas.getContext("2d");
 //Create hidden canvas for double buffering
 const hiddenCanvas = document.createElement("canvas");
 const hiddenCtx = hiddenCanvas.getContext("2d");
+const scale = 3;
 
 // Set the size of the visible canvas
-canvas.width = 480;
-canvas.height = 300;
+canvas.width = 480 * scale;
+canvas.height = 300 * scale;
 
 // Set the size of the hidden canvas to match the visible canvas
 hiddenCanvas.width = canvas.width;
 hiddenCanvas.height = canvas.height;
 
-const gravity = 0.3;
-const animationSpeed = 12;
+canvas.style.display = 'block';
+canvas.style.marginLeft = 'auto';
+canvas.style.marginRight = 'auto';
+
+
+const gravity = 0.15;
+const animationSpeed = 20;
 
 // Initialize game state to INTRO
 let gameStateIntro = true;
@@ -27,7 +33,7 @@ const backgroundImage = new Background({
     y: 0,
   },
   imageSrc: "img/background_desert.png",
-  scale: 1,
+  scale: scale,
 });
 
 let pinkMonster;
@@ -45,6 +51,7 @@ Promise.all([
       y: 200,
       width: 20,
       height: 20,
+      scale: scale,
       sprites: preloadedPinkMonsterSprites,
       spriteWidth: 32,
       spriteHeight: 32,
@@ -57,6 +64,7 @@ Promise.all([
       y: 200,
       width: 20,
       height: 20,
+      scale: scale,
       sprites: preloadedOwletSprites,
       spriteWidth: 32,
       spriteHeight: 32,
