@@ -1,0 +1,81 @@
+// Draw the intro screen
+function drawIntroScreen() {
+  ctx.save();
+  ctx.font = "15px Arial";
+  ctx.fillStyle = "black";
+  ctx.textAlign = "center";
+  ctx.fillText("Ready to rumble?!", canvas.width / 2, canvas.height / 6);
+  ctx.fillText("Move the players with a, d and arrow keys", canvas.width / 2, canvas.height / 3.5);
+  ctx.fillText("Jump with w and the up arrow", canvas.width / 2, canvas.height / 2.7);
+  ctx.fillText("Attack each other with s and the down arrow", canvas.width / 2, canvas.height / 2.2);
+  ctx.fillText("Press ENTER to start the game", canvas.width / 2, canvas.height / 1.7);
+
+  ctx.restore();
+}
+
+function draw() {
+  // Clear the hidden canvas
+  hiddenCtx.clearRect(0, 0, hiddenCanvas.width, hiddenCanvas.height);
+
+  backgroundImage.drawBackground(hiddenCtx);
+
+  // Draw collision blocks first
+  floorCollisionBlocks.forEach((collisionBlock) => {
+    const collisionBlockScale = backgroundImage.scale;
+    collisionBlock.drawCollisionBlock(hiddenCtx, collisionBlockScale);
+  });
+
+  platformCollisionBlocks.forEach((collisionBlock) => {
+    const collisionBlockScale = backgroundImage.scale;
+    collisionBlock.drawCollisionBlock(hiddenCtx, collisionBlockScale);
+  });
+
+  pinkMonster.drawPlayer(hiddenCtx);
+  owlet.drawPlayer(hiddenCtx);
+
+  // Draw health bars on top of the players
+  drawHealthBar(pinkMonster, 10, 10, 100, 10, ctx);
+  drawHealthBar(owlet, canvas.width - 100, 10, 100, 10, ctx);
+}
+
+function drawHealthBar(player, x, y, width, height, ctx) {
+  if (!player) return; // if player object is null or undefined, just return
+  ctx.save();
+  ctx.fillStyle = "#FF0000"; // color for the background of the health bar
+  ctx.fillRect(x, y, width, height);
+
+  const healthPercentage = player.health / player.maxHealth;
+  ctx.fillStyle = player.health > 0 ? "#00FF00" : "#FF0000"; // color for the actual health
+  ctx.fillRect(x, y, width * healthPercentage, height);
+
+  // Add the black outline
+  ctx.strokeStyle = "black"; // color for the outline
+  ctx.lineWidth = 2; // thickness of the outline
+  ctx.strokeRect(x, y, width, height);
+
+  ctx.restore();
+}
+
+function drawMessage(message) {
+  ctx.save();
+  ctx.font = "30px 'Comic Sans MS'"; // Change font to Comic Sans MS
+  ctx.fillStyle = "black"; // Text color
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(message, canvas.width / 2, canvas.height / 2 - 30); // Move 15 pixels below center
+  ctx.restore();
+}
+
+function drawRestartMessage() {
+  ctx.save();
+  ctx.font = "20px 'Comic Sans MS'";
+  ctx.fillStyle = "black";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(
+    "Press SPACE to play again!!",
+    canvas.width / 2,
+    canvas.height / 2 + 35
+    );
+    ctx.restore();
+  }
