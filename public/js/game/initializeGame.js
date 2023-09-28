@@ -50,6 +50,7 @@ Promise.all([
       spriteHeight: 32,
       id: "Pink wins <3",
       direction: "left",
+      
     });
 
     owlet = new Player({

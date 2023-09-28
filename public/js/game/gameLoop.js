@@ -31,13 +31,13 @@ function gameLoop() {
 }
 
 function updateGameState() {
-  pinkMonster.handleKeyPress(keys.pinkMonster);
-  pinkMonster.updatePosition();
-  pinkMonster.updateAnimation();
+  pinkMonster.input.handleKeyPress(keys.pinkMonster);
+  pinkMonster.gameLogic.updatePosition();
+  pinkMonster.animation.updateAnimation();
 
-  owlet.handleKeyPress(keys.owlet);
-  owlet.updatePosition();
-  owlet.updateAnimation();
+  owlet.input.handleKeyPress(keys.owlet);
+  owlet.gameLogic.updatePosition();
+  owlet.animation.updateAnimation();
 }
   
   function restartGame() {

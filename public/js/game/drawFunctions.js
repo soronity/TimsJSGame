@@ -30,8 +30,8 @@ function draw() {
     collisionBlock.drawCollisionBlock(hiddenCtx, collisionBlockScale);
   });
 
-  pinkMonster.drawPlayer(hiddenCtx);
-  owlet.drawPlayer(hiddenCtx);
+  pinkMonster.animation.drawPlayer(hiddenCtx);
+  owlet.animation.drawPlayer(hiddenCtx);
 
   // Draw health bars on top of the players
   drawHealthBar(pinkMonster, 10, 10, 100, 10, ctx);

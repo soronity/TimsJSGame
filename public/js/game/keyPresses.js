@@ -35,13 +35,13 @@ function updateKeyPressedState(code, isPressed) {
   // Player 1 attack
   if (code === "KeyS") {
     keys.pinkMonster.s.pressed = isPressed;
-    if (isPressed) pinkMonster.attack(owlet); // If the attack key is pressed, call attack
+    if (isPressed) pinkMonster.gameLogic.attack(owlet); // If the attack key is pressed, call attack
   }
 
   // Player 2 attack
   if (code === "ArrowDown") {
     keys.owlet.arrowDown.pressed = isPressed;
-    if (isPressed) owlet.attack(pinkMonster); // If the attack key is pressed, call attack
+    if (isPressed) owlet.gameLogic.attack(pinkMonster); // If the attack key is pressed, call attack
   }
 
   if ((code === "Space") && isPressed && (gameOver == true)) {
