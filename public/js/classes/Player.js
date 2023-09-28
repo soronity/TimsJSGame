@@ -43,6 +43,8 @@ class Player {
     this.health = 100;
     this.maxHealth = 100;
     this.id = id;
+    this.isCooldownActive = false;
+    this.cooldownTime = 1000; // 1 second in milliseconds
   }
 
   handleKeyPress(options) {
@@ -156,15 +158,20 @@ class Player {
   }
 
   attack(opponent) {
-    if (gameOver) {
+    if (gameOver || this.isCooldownActive) {
       return;
     }
     if (this.hitboxCollidesWith(opponent)) {
       hit1.play();
       opponent.takeDamage(10);
+      this.isCooldownActive = true;
+      setTimeout(() => {
+        this.isCooldownActive = false;
+      }, this.cooldownTime);
       this.checkForGameOver();
     }
   }
+  
 
   takeDamage(damage) {
     this.health -= damage;
