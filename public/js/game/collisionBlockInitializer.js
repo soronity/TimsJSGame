@@ -1,4 +1,4 @@
-function initializeCollisionBlocks(collisionsData, collisionBlockNumber) {
+function initializeCollisionBlocks(collisionsData, collisionBlockNumber, scale) {
   const collisions2DArray = [];
   for (let i = 0; i < collisionsData.length; i += 30) {
     collisions2DArray.push(collisionsData.slice(i, i + 30));
@@ -12,10 +12,9 @@ function initializeCollisionBlocks(collisionsData, collisionBlockNumber) {
         collisionBlocks.push(
           new CollisionBlock({
             position: {
-              x: j * 16,
-              y: i * 16,
+              x: j * 16 * scale,
+              y: i * 16 * scale,
             },
-            scale: 1,
           })
         );
       }

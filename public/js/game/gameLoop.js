@@ -2,11 +2,13 @@ const collisionBlockID = 243;
 
 const floorCollisionBlocks = initializeCollisionBlocks(
   floorCollisions,
-  collisionBlockID
+  collisionBlockID,
+  scale
 );
 const platformCollisionBlocks = initializeCollisionBlocks(
   platformCollisions,
-  collisionBlockID
+  collisionBlockID,
+  scale
 );
 
 function gameLoop() {

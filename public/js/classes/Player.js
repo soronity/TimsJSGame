@@ -4,6 +4,7 @@ class Player {
     y,
     width,
     height,
+    scale,
     sprites,
     spriteWidth,
     spriteHeight,
@@ -12,8 +13,9 @@ class Player {
   }) {
     this.x = x;
     this.y = y;
-    this.width = width;
-    this.height = height;
+    this.width = width * scale;
+    this.height = height * scale;
+    this.scale = scale;
     this.velocityY = 0;
     this.velocityX = 0;
     this.isMidAir = false;
@@ -83,7 +85,7 @@ class Player {
 
   jump() {
     if (!this.isMidAir && (this.isOnFloor() || this.isOnPlatform())) {
-      this.velocityY = -7;
+      this.velocityY = -8;
       this.isMidAir = true;
     }
   }
