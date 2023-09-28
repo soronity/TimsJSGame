@@ -87,6 +87,7 @@ class Player {
     if (!this.isMidAir && (this.isOnFloor() || this.isOnPlatform())) {
       this.velocityY = -8;
       this.isMidAir = true;
+      jump2.play();
     }
   }
 
@@ -159,6 +160,7 @@ class Player {
       return;
     }
     if (this.hitboxCollidesWith(opponent)) {
+      hit1.play();
       opponent.takeDamage(10);
       this.checkForGameOver();
     }
@@ -171,6 +173,7 @@ class Player {
 
   checkForGameOver() {
     if (pinkMonster.health <= 0 || owlet.health <= 0) {
+      kill.play();
       // Determine winner based on health
       let winner =
         pinkMonster.health > owlet.health ? pinkMonster.id : owlet.id;
@@ -179,7 +182,7 @@ class Player {
       setTimeout(() => {
         drawMessage(winner);
         gameOver = true;
-      }, 1000);
+      }, 1500);
     }
 
   }

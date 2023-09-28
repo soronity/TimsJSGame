@@ -19,7 +19,6 @@ canvas.style.display = 'block';
 canvas.style.marginLeft = 'auto';
 canvas.style.marginRight = 'auto';
 
-
 const gravity = 0.15;
 const animationSpeed = 20;
 

@@ -64,7 +64,7 @@ function drawMessage(message) {
   ctx.fillStyle = "black"; // Text color
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(message, canvas.width / 2, canvas.height / 2 - 30); // Move 15 pixels below center
+  ctx.fillText(message, canvas.width / 2, canvas.height / 2 - 90); // Move x pixels below center
   ctx.restore();
 }
 
@@ -77,7 +77,7 @@ function drawRestartMessage() {
   ctx.fillText(
     "Press SPACE to play again!!",
     canvas.width / 2,
-    canvas.height / 2 + 55
+    canvas.height / 2 + 90
     );
     ctx.restore();
   }
