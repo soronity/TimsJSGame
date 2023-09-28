@@ -5,7 +5,7 @@ function drawIntroScreen() {
   ctx.fillStyle = "black";
   ctx.textAlign = "center";
   ctx.fillText("Ready to rumble?!", canvas.width / 2, canvas.height / 6);
-  ctx.fillText("Unfortunately, the animation speed might be very slow or fast depending on your compter :( I'm working on it!", canvas.width / 2, canvas.height / 4.5);
+  ctx.fillText("Unfortunately, the animation speed might be very slow or fast depending on your computer :( However, do not fret; I'm working on it!", canvas.width / 2, canvas.height / 4.5);
   ctx.fillText("Move the players with a, d and arrow keys", canvas.width / 2, canvas.height / 3.5);
   ctx.fillText("Jump with w and the up arrow", canvas.width / 2, canvas.height / 2.7);
   ctx.fillText("Attack each other with s and the down arrow", canvas.width / 2, canvas.height / 2.2);

@@ -19,12 +19,23 @@ function gameLoop() {
 
   if (gameOver) {
     drawRestartMessage();
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
+    gameOverMusic.play();
     return;
   }
   else if (gameStateIntro) {
     drawIntroScreen();
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
+    introMusic.play();
   }
   else {
+    introMusic.pause();
+    introMusic.currentTime = 0;
+    gameOverMusic.pause();
+    gameOverMusic.currentTime = 0;
+    backgroundMusic.play();
     updateGameState();
     draw();
   }
@@ -50,5 +61,8 @@ function updateGameState() {
     owlet.x = 600;
     owlet.y = 200;
     gameOver = false;
+    gameOverMusic.pause();
+    gameOverMusic.currentTime = 0;
+    backgroundMusic.play();
     requestAnimationFrame(gameLoop);
   }
