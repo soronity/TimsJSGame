@@ -11,34 +11,27 @@ function drawIntroScreen() {
   ctx.fillText("Jump with w and the up arrow", canvas.width / 2, canvas.height / 2.7);
   ctx.fillText("Attack each other with s and the down arrow", canvas.width / 2, canvas.height / 2.2);
   ctx.fillText("Press ENTER to start the game", canvas.width / 2, canvas.height / 1.7);
-
   ctx.restore();
 }
 
 function draw() {
-  // Clear the hidden canvas
-  hiddenCtx.clearRect(0, 0, hiddenCanvas.width, hiddenCanvas.height);
+  // Draw background directly on ctx
+  backgroundImage.drawBackground(ctx);
 
-  backgroundImage.drawBackground(hiddenCtx);
-
-  // Draw collision blocks first
   floorCollisionBlocks.forEach((collisionBlock) => {
-    const collisionBlockScale = backgroundImage.scale;
-    collisionBlock.drawCollisionBlock(hiddenCtx, collisionBlockScale);
+    collisionBlock.drawCollisionBlock(ctx, backgroundImage.scale);
   });
 
   platformCollisionBlocks.forEach((collisionBlock) => {
-    const collisionBlockScale = backgroundImage.scale;
-    collisionBlock.drawCollisionBlock(hiddenCtx, collisionBlockScale);
+    collisionBlock.drawCollisionBlock(ctx, backgroundImage.scale);
   });
 
-  pinkMonster.drawPlayer(hiddenCtx);
-  owlet.drawPlayer(hiddenCtx);
+  pinkMonster.drawPlayer(ctx);
+  owlet.drawPlayer(ctx);
 
-  // Draw health bars on top of the players
+  // Draw health bars
   drawHealthBar(pinkMonster, 10, 10, 100, 10, ctx);
   drawHealthBar(owlet, canvas.width - 315, 10, 100, 10, ctx);
- 
 }
 
 function drawHealthBar(player, x, y, width, height, ctx) {

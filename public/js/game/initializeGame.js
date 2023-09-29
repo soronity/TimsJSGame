@@ -2,18 +2,11 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-//Create hidden canvas for double buffering
-const hiddenCanvas = document.createElement("canvas");
-const hiddenCtx = hiddenCanvas.getContext("2d");
 const scale = 3;
 
 // Set the size of the visible canvas
 canvas.width = 480 * scale;
 canvas.height = 300 * scale;
-
-// Set the size of the hidden canvas to match the visible canvas
-hiddenCanvas.width = canvas.width;
-hiddenCanvas.height = canvas.height;
 
 canvas.style.display = 'block';
 canvas.style.marginLeft = 'auto';

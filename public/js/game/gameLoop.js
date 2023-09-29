@@ -13,7 +13,7 @@ const platformCollisionBlocks = initializeCollisionBlocks(
 
 function gameLoop() {
   if (!gameOver) {
-    // Clear the visible canvas only if game isn't over
+    // Clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
