@@ -52,13 +52,13 @@ class Player {
       (options.a && options.a.pressed) ||
       (options.arrowLeft && options.arrowLeft.pressed)
     ) {
-      this.velocityX = -2;
+      this.velocityX = -4;
       this.direction = "left";
     } else if (
       (options.d && options.d.pressed) ||
       (options.arrowRight && options.arrowRight.pressed)
     ) {
-      this.velocityX = 2;
+      this.velocityX = 4;
       this.direction = "right";
     } else {
       this.velocityX = 0;
@@ -87,7 +87,7 @@ class Player {
 
   jump() {
     if (!this.isMidAir && (this.isOnFloor() || this.isOnPlatform())) {
-      this.velocityY = -8;
+      this.velocityY = -11;
       this.isMidAir = true;
       jump2.play();
     }

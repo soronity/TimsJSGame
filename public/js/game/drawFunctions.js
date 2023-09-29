@@ -4,7 +4,7 @@ function drawIntroScreen() {
   ctx.font = "15px Comic Sans MS";
   ctx.fillStyle = "black";
   ctx.textAlign = "center";
-  ctx.fillText("First of all, make sure to clock on this page to hear the pump-up music (and perhaps experience nostalgia?!)", canvas.width / 2, canvas.height / 8.5);
+  ctx.fillText("First of all, make sure to clock on this page to hear the pump-up music (and perhaps experience some nostalgia?)", canvas.width / 2, canvas.height / 8.5);
   ctx.fillText("Second, are you ready to rumble?!", canvas.width / 2, canvas.height / 6);
   ctx.fillText("Unfortunately, the animation speed might be very slow or fast depending on your computer :( However, do not fret; I'm working on it!", canvas.width / 2, canvas.height / 4.5);
   ctx.fillText("Move the players with a, d and arrow keys", canvas.width / 2, canvas.height / 3.5);

@@ -19,8 +19,8 @@ canvas.style.display = 'block';
 canvas.style.marginLeft = 'auto';
 canvas.style.marginRight = 'auto';
 
-const gravity = 0.15;
-const animationSpeed = 20;
+const gravity = 0.25;
+const animationSpeed = 10;
 
 // Initialize game state to INTRO
 let gameStateIntro = true;
