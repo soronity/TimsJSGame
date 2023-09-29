@@ -45,6 +45,11 @@ class Player {
     this.id = id;
     this.isCooldownActive = false;
     this.cooldownTime = 1000; // 1 second in milliseconds
+    this.attackFrame = 0;
+    this.deathFrame = 0;
+    this.isAttacking = false;
+    this.isDead = false;
+    this.isJumping = false;
   }
 
   handleKeyPress(options) {
@@ -89,9 +94,11 @@ class Player {
     if (!this.isMidAir && (this.isOnFloor() || this.isOnPlatform())) {
       this.velocityY = -11;
       this.isMidAir = true;
+      this.isJumping = true;
       jump2.play();
     }
   }
+  
 
   isOnPlatform() {
     for (const block of platformCollisionBlocks) {
@@ -102,6 +109,7 @@ class Player {
           this.velocityY = 0;
           this.y = block.position.y - this.height;
           this.isMidAir = false;
+          this.isJumping = false; // Reset the flag
           return true;
         }
       }
@@ -115,6 +123,7 @@ class Player {
       if (this.collidesWith(block) && playerBottom <= block.position.y + 1) {
         this.y = block.position.y - this.height;
         this.isMidAir = false;
+        this.isJumping = false;
         return true;
       }
     }
@@ -162,7 +171,15 @@ class Player {
       return;
     }
     if (this.hitboxCollidesWith(opponent)) {
-      hit1.play();
+      this.isAttacking = true;
+      // Add a timeout to reset the isAttacking flag
+      setTimeout(() => {
+        this.isAttacking = false;
+      }, 500);  // Set the time to match your attack animation duration
+  
+      let hitSound = hit1.cloneNode();
+      hitSound.play();
+  
       opponent.takeDamage(10);
       this.isCooldownActive = true;
       setTimeout(() => {
@@ -176,8 +193,11 @@ class Player {
   takeDamage(damage) {
     this.health -= damage;
     this.health = Math.max(this.health, 0); // Ensure health doesn't go below 0
+    if (this.health === 0) {
+      this.isDead = true;
+    }
   }
-
+  
   checkForGameOver() {
     if (pinkMonster.health <= 0 || owlet.health <= 0) {
       kill.play();
@@ -189,7 +209,7 @@ class Player {
       setTimeout(() => {
         drawMessage(winner);
         gameOver = true;
-      }, 1500);
+      }, 850);
     }
 
   }
@@ -233,12 +253,16 @@ class Player {
   }
 
   drawPlayer() {
-    //TODO make a separate function chooseSprite
-    let spriteToUse = this.sprites.idle;
-
-    if (this.velocityX !== 0) {
-      spriteToUse = this.sprites.run;
-      //TODO if attacking and running, use that sprite, etc
+    let spriteToUse;
+    
+    if (this.isAttacking) {
+      spriteToUse = this.sprites.idle_attack;
+    } else if (this.isDead) {
+      spriteToUse = this.sprites.death;
+    } else if (this.isJumping) {
+      spriteToUse = this.sprites.jump;
+    } else {
+      spriteToUse = this.velocityX !== 0 ? this.sprites.run : this.sprites.idle;
     }
 
     let currentFrameX = this.currentFrame * this.spriteWidth;
@@ -293,19 +317,21 @@ class Player {
   }
 
   updateAnimation() {
-    let maxFrames = this.velocityX !== 0 ? 6 : 4;
-    // if (this.velocityY !== 0) {
-    //     maxFrames = 8;
-    // }
-    //TODO isDead animation with global isDead flag? Eller använd gameOver helt enkelt
-    //else if (gameOvver) {
-    //  maxFrames = 8;
-    //}
+    let maxFrames;
 
+    if (this.isAttacking) {
+      maxFrames = 6;
+    } else if (this.isDead) {
+      maxFrames = 8;
+    } else if (this.isJumping) {
+      maxFrames = 8; // Assuming the jump animation has 8 frames
+    } else {
+      maxFrames = this.velocityX !== 0 ? 6 : 4;
+    }
+  
     this.frameCounter++;
     if (this.frameCounter >= animationSpeed) {
       this.frameCounter = 0;
-      // Update the current frame
       this.currentFrame = (this.currentFrame + 1) % maxFrames;
     }
   }

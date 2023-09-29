@@ -53,16 +53,18 @@ function updateGameState() {
   owlet.updateAnimation();
 }
   
-  function restartGame() {
-    pinkMonster.health = 100;
-    owlet.health = 100;
-    pinkMonster.x = 100;
-    pinkMonster.y = 200;
-    owlet.x = 600;
-    owlet.y = 200;
-    gameOver = false;
-    gameOverMusic.pause();
-    gameOverMusic.currentTime = 0;
-    backgroundMusic.play();
-    requestAnimationFrame(gameLoop);
-  }
+function restartGame() {
+  pinkMonster.health = 100;
+  owlet.health = 100;
+  pinkMonster.x = 100;
+  pinkMonster.y = 200;
+  owlet.x = 600;
+  owlet.y = 200;
+  pinkMonster.isDead = false;
+  owlet.isDead = false;
+  gameOver = false;
+  gameOverMusic.pause();
+  gameOverMusic.currentTime = 0;
+  backgroundMusic.play();
+  requestAnimationFrame(gameLoop);
+}
