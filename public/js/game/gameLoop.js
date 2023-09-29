@@ -1,3 +1,5 @@
+let lastTime = 0; // Store the last time gameLoop was called
+
 const collisionBlockID = 243;
 
 const floorCollisionBlocks = initializeCollisionBlocks(
@@ -11,9 +13,11 @@ const platformCollisionBlocks = initializeCollisionBlocks(
   scale
 );
 
-function gameLoop() {
+function gameLoop(currentTime) {
+  const deltaTime = currentTime - lastTime; // Calculate time difference
+  lastTime = currentTime; // Update lastTime for next frame
+
   if (!gameOver) {
-    // Clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
@@ -36,21 +40,21 @@ function gameLoop() {
     gameOverMusic.pause();
     gameOverMusic.currentTime = 0;
     backgroundMusic.play();
-    updateGameState();
+    updateGameState(deltaTime); // Pass deltaTime to updateGameState
     draw();
   }
 
   requestAnimationFrame(gameLoop);
 }
 
-function updateGameState() {
+function updateGameState(deltaTime) { // Take deltaTime as parameter
   pinkMonster.handleKeyPress(keys.pinkMonster);
-  pinkMonster.updatePosition();
-  pinkMonster.updateAnimation();
+  pinkMonster.updatePosition(deltaTime); // Use deltaTime in update functions
+  pinkMonster.updateAnimation(deltaTime); // Use deltaTime in update functions
 
   owlet.handleKeyPress(keys.owlet);
-  owlet.updatePosition();
-  owlet.updateAnimation();
+  owlet.updatePosition(deltaTime); // Use deltaTime in update functions
+  owlet.updateAnimation(deltaTime); // Use deltaTime in update functions
 }
   
 function restartGame() {
@@ -66,5 +70,6 @@ function restartGame() {
   gameOverMusic.pause();
   gameOverMusic.currentTime = 0;
   backgroundMusic.play();
+  lastTime = 0; // Reset lastTime when restarting the game
   requestAnimationFrame(gameLoop);
 }
