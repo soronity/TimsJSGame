@@ -57,13 +57,13 @@ class Player {
       (options.a && options.a.pressed) ||
       (options.arrowLeft && options.arrowLeft.pressed)
     ) {
-      this.velocityX = -4;
+      this.velocityX = -200;
       this.direction = "left";
     } else if (
       (options.d && options.d.pressed) ||
       (options.arrowRight && options.arrowRight.pressed)
     ) {
-      this.velocityX = 4;
+      this.velocityX = 200;
       this.direction = "right";
     } else {
       this.velocityX = 0;
@@ -76,23 +76,27 @@ class Player {
     }
   }
 
-  updatePosition() {
-    this.addGravity();
-
+  updatePosition(deltaTime) {
+    this.addGravity(deltaTime);  // You'll also need to modify addGravity()
+  
     this.checkFloorCollision();
     this.checkPlatformCollision();
-
-    this.x += this.velocityX;
-    this.y += this.velocityY;
-
+  
+    const velocityXPerSecond = this.velocityX * (deltaTime / 1000);
+    const velocityYPerSecond = this.velocityY * (deltaTime / 1000);
+  
+    this.x += velocityXPerSecond;
+    this.y += velocityYPerSecond;
+  
     if (this.x + this.width > canvas.width || this.x < 0) {
       this.x = Math.min(Math.max(this.x, 0), canvas.width - this.width);
     }
   }
+  
 
   jump() {
     if (!this.isMidAir && (this.isOnFloor() || this.isOnPlatform())) {
-      this.velocityY = -11;
+      this.velocityY = -600;
       this.isMidAir = true;
       this.isJumping = true;
       jump2.play();
@@ -246,9 +250,9 @@ class Player {
     return false; // Return false if no collision was found.
   }
 
-  addGravity() {
+  addGravity(deltaTime) {
     if (!this.isOnPlatform() && !this.isOnFloor()) {
-      this.velocityY += gravity;
+      this.velocityY += gravity * (deltaTime / 1000)
     }
   }
 
@@ -316,23 +320,26 @@ class Player {
     ctx.restore(); // Restore the canvas to its previous state
   }
 
-  updateAnimation() {
+  updateAnimation(deltaTime) {
     let maxFrames;
-
+  
     if (this.isAttacking) {
       maxFrames = 6;
     } else if (this.isDead) {
       maxFrames = 8;
     } else if (this.isJumping) {
-      maxFrames = 8; // Assuming the jump animation has 8 frames
+      maxFrames = 8;
     } else {
       maxFrames = this.velocityX !== 0 ? 6 : 4;
     }
   
-    this.frameCounter++;
-    if (this.frameCounter >= animationSpeed) {
-      this.frameCounter = 0;
+    this.frameCounter += deltaTime;
+  
+    const frameTime = animationSpeed;  // If animationSpeed is the time for one animation frame in ms
+  
+    if (this.frameCounter >= frameTime) {
+      this.frameCounter -= frameTime; // Substract frameTime, instead of setting it to 0
       this.currentFrame = (this.currentFrame + 1) % maxFrames;
     }
-  }
+  }  
 }

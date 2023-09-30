@@ -1,4 +1,4 @@
-let lastTime = 0; // Store the last time gameLoop was called
+let lastTime = null; // Store the last time gameLoop was called
 
 const collisionBlockID = 243;
 
@@ -14,6 +14,11 @@ const platformCollisionBlocks = initializeCollisionBlocks(
 );
 
 function gameLoop(currentTime) {
+  // If lastTime is null (i.e., game just restarted), set it to currentTime
+  if (lastTime === null) {
+    lastTime = currentTime;
+  }
+
   const deltaTime = currentTime - lastTime; // Calculate time difference
   lastTime = currentTime; // Update lastTime for next frame
 
@@ -70,6 +75,6 @@ function restartGame() {
   gameOverMusic.pause();
   gameOverMusic.currentTime = 0;
   backgroundMusic.play();
-  lastTime = 0; // Reset lastTime when restarting the game
+  lastTime = null; // Reset lastTime when restarting the game
   requestAnimationFrame(gameLoop);
 }
