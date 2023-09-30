@@ -1,7 +1,6 @@
 A bare-bones 2D fighter game on https://soronity.github.io/TimsJSGame/public/index.html
 
 Bugs to fix:
-- Different animation speeds on different computers
 - Flickering player image
   
 Features to add:
