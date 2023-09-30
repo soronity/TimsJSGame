@@ -1,12 +1,11 @@
 // Draw the intro screen
 function drawIntroScreen() {
   ctx.save();
-  ctx.font = "15px Comic Sans MS";
+  ctx.font = "20px Comic Sans MS";
   ctx.fillStyle = "black";
   ctx.textAlign = "center";
-  ctx.fillText("First of all, make sure to clock on this page to hear the pump-up music (and perhaps experience some nostalgia?)", canvas.width / 2, canvas.height / 8.5);
-  ctx.fillText("Second, are you ready to rumble?!", canvas.width / 2, canvas.height / 6);
-  ctx.fillText("Unfortunately, the animation speed might be very slow or fast depending on your computer :( However, do not fret; I'm working on it!", canvas.width / 2, canvas.height / 4.5);
+  ctx.fillText("First of all, make sure to clock on this page to hear the pump-up music (and perhaps experience some nostalgia?)", canvas.width / 2, canvas.height / 7);
+  ctx.fillText("Second, are you ready to rumble?!", canvas.width / 2, canvas.height / 5);
   ctx.fillText("Move the players with a, d and arrow keys", canvas.width / 2, canvas.height / 3.5);
   ctx.fillText("Jump with w and the up arrow", canvas.width / 2, canvas.height / 2.7);
   ctx.fillText("Attack each other with s and the down arrow", canvas.width / 2, canvas.height / 2.2);
@@ -54,7 +53,7 @@ function drawHealthBar(player, x, y, width, height, ctx) {
 
 function drawMessage(message) {
   ctx.save();
-  ctx.font = "30px 'Comic Sans MS'"; // Change font to Comic Sans MS
+  ctx.font = "40px 'Comic Sans MS'"; // Change font to Comic Sans MS
   ctx.fillStyle = "black"; // Text color
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
