@@ -1,10 +1,10 @@
 // Draw the intro screen
 function drawIntroScreen() {
   ctx.save();
-  ctx.font = "20px Comic Sans MS";
+  ctx.font = "25px Comic Sans MS";
   ctx.fillStyle = "black";
   ctx.textAlign = "center";
-  ctx.fillText("First of all, make sure to clock on this page to hear the pump-up music (and perhaps experience some nostalgia?)", canvas.width / 2, canvas.height / 7);
+  ctx.fillText("First of all, make sure to click on this page to hear the pump-up music (and perhaps experience some nostalgia?)", canvas.width / 2, canvas.height / 7);
   ctx.fillText("Second, are you ready to rumble?!", canvas.width / 2, canvas.height / 5);
   ctx.fillText("Move the players with a, d and arrow keys", canvas.width / 2, canvas.height / 3.5);
   ctx.fillText("Jump with w and the up arrow", canvas.width / 2, canvas.height / 2.7);
