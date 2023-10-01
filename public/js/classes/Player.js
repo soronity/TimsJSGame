@@ -96,10 +96,10 @@ class Player {
 
   jump() {
     if (!this.isMidAir && (this.isOnFloor() || this.isOnPlatform())) {
+      jump2.play();
       this.velocityY = -600;
       this.isMidAir = true;
       this.isJumping = true;
-      jump2.play();
     }
   }
   
@@ -174,13 +174,12 @@ class Player {
     if (gameOver || this.isCooldownActive) {
       return;
     }
+    this.isAttacking = true;
+    // Add a timeout to reset the isAttacking flag
+    setTimeout(() => {
+      this.isAttacking = false;
+    }, 500);  // Set the time to match your attack animation duration
     if (this.hitboxCollidesWith(opponent)) {
-      this.isAttacking = true;
-      // Add a timeout to reset the isAttacking flag
-      setTimeout(() => {
-        this.isAttacking = false;
-      }, 500);  // Set the time to match your attack animation duration
-  
       let hitSound = hit1.cloneNode();
       hitSound.play();
   
