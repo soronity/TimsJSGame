@@ -73,7 +73,6 @@ function restartGame() {
   gameOver = false;
   gameOverMusic.pause();
   gameOverMusic.currentTime = 0;
-  backgroundMusic.play();
   lastTime = null; // Reset lastTime when restarting the game
   requestAnimationFrame(gameLoop);
 }
