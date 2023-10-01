@@ -15,6 +15,10 @@ canvas.style.marginRight = 'auto';
 const gravity = 800;
 const animationSpeed = 150;
 
+let showInstructions = false; // Variable to toggle showing instructions
+let musicPlaying = false; // Variable to toggle music on and off
+
+
 // Initialize game state to INTRO
 let gameStateIntro = true;
 let gameOver = false;

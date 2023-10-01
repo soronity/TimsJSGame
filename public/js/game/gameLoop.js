@@ -28,24 +28,23 @@ function gameLoop(currentTime) {
 
   if (gameOver) {
     drawRestartMessage();
-    backgroundMusic.pause();
-    backgroundMusic.currentTime = 0;
-    gameOverMusic.play();
-    return;
+    if (musicPlaying) {
+      backgroundMusic.pause();
+      backgroundMusic.currentTime = 0;
+      gameOverMusic.play();
+      return;
+    }
   }
   else if (gameStateIntro) {
+    draw();
     drawIntroScreen();
     backgroundMusic.pause();
     backgroundMusic.currentTime = 0;
-    introMusic.play();
   }
   else {
-    introMusic.pause();
-    introMusic.currentTime = 0;
     gameOverMusic.pause();
     gameOverMusic.currentTime = 0;
-    backgroundMusic.play();
-    updateGameState(deltaTime); // Pass deltaTime to updateGameState
+    updateGameState(deltaTime);
     draw();
   }
 
