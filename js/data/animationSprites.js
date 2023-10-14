@@ -14,14 +14,18 @@ const pinkMonsterAnimations = {
     spriteSrc: "img/characters/pink/Pink_Monster_Run_6.png",
     totalFrames: 6,
   },
-  // jump: {
-  //     spriteSrc: "img/characters/pink/Pink_Monster_Jump.png",
-  //     totalFrames: 4,
-  // },
-  // idle_attack: {
-  //     spriteSrc: "img/characters/pink/Pink_Monster_Idle_Attack.png",
-  //     totalFrames: 4,
-  // },
+  death: {
+    spriteSrc: "img/characters/pink/Pink_Monster_Death_8.png",
+    totalFrames: 8,
+  },
+  jump: {
+    spriteSrc: "img/characters/pink/Pink_Monster_Jump_8.png",
+    totalFrames: 8,
+  },
+  idle_attack: {
+    spriteSrc: "img/characters/pink/Pink_Monster_Attack2_6.png",
+    totalFrames: 6,
+  },
   // run_attack: {
   //     spriteSrc: "img/characters/pink/Pink_Monster_Run_Attack.png",
   //     totalFrames: 6,
@@ -53,14 +57,18 @@ const owletAnimations = {
     spriteSrc: "img/characters/owlet/Owlet_Monster_Run_6.png",
     totalFrames: 6,
   },
-  // jump: {
-  //     spriteSrc: "img/characters/owlet/Owlet_Jump.png",
-  //     totalFrames: 4,
-  // },
-  // idle_attack: {
-  //     spriteSrc: "img/characters/owlet/Owlet_Idle_Attack.png",
-  //     totalFrames: 4,
-  // },
+  death: {
+    spriteSrc: "img/characters/owlet/Owlet_Monster_Death_8.png",
+    totalFrames: 8,
+   },
+  jump: {
+    spriteSrc: "img/characters/owlet/Owlet_Monster_Jump_8.png",
+    totalFrames: 8,
+  },
+  idle_attack: {
+    spriteSrc: "img/characters/owlet/Owlet_Monster_Attack2_6.png",
+    totalFrames: 6,
+  },
   // run_attack: {
   //     spriteSrc: "img/characters/owlet/Owlet_Run_Attack.png",
   //     totalFrames: 6,

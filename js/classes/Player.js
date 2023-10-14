@@ -4,6 +4,7 @@ class Player {
     y,
     width,
     height,
+    scale,
     sprites,
     spriteWidth,
     spriteHeight,
@@ -12,8 +13,9 @@ class Player {
   }) {
     this.x = x;
     this.y = y;
-    this.width = width;
-    this.height = height;
+    this.width = width * scale;
+    this.height = height * scale;
+    this.scale = scale;
     this.velocityY = 0;
     this.velocityX = 0;
     this.isMidAir = false;
@@ -41,6 +43,13 @@ class Player {
     this.health = 100;
     this.maxHealth = 100;
     this.id = id;
+    this.isCooldownActive = false;
+    this.cooldownTime = 1000; // 1 second in milliseconds
+    this.attackFrame = 0;
+    this.deathFrame = 0;
+    this.isAttacking = false;
+    this.isDead = false;
+    this.isJumping = false;
   }
 
   handleKeyPress(options) {
@@ -48,13 +57,13 @@ class Player {
       (options.a && options.a.pressed) ||
       (options.arrowLeft && options.arrowLeft.pressed)
     ) {
-      this.velocityX = -2;
+      this.velocityX = -350;
       this.direction = "left";
     } else if (
       (options.d && options.d.pressed) ||
       (options.arrowRight && options.arrowRight.pressed)
     ) {
-      this.velocityX = 2;
+      this.velocityX = 350;
       this.direction = "right";
     } else {
       this.velocityX = 0;
@@ -67,26 +76,33 @@ class Player {
     }
   }
 
-  updatePosition() {
-    this.addGravity();
-
+  updatePosition(deltaTime) {
+    this.addGravity(deltaTime);  // You'll also need to modify addGravity()
+  
     this.checkFloorCollision();
     this.checkPlatformCollision();
-
-    this.x += this.velocityX;
-    this.y += this.velocityY;
-
+  
+    const velocityXPerSecond = this.velocityX * (deltaTime / 1000);
+    const velocityYPerSecond = this.velocityY * (deltaTime / 1000);
+  
+    this.x += velocityXPerSecond;
+    this.y += velocityYPerSecond;
+  
     if (this.x + this.width > canvas.width || this.x < 0) {
       this.x = Math.min(Math.max(this.x, 0), canvas.width - this.width);
     }
   }
+  
 
   jump() {
     if (!this.isMidAir && (this.isOnFloor() || this.isOnPlatform())) {
-      this.velocityY = -7;
+      jump2.play();
+      this.velocityY = -600;
       this.isMidAir = true;
+      this.isJumping = true;
     }
   }
+  
 
   isOnPlatform() {
     for (const block of platformCollisionBlocks) {
@@ -97,6 +113,7 @@ class Player {
           this.velocityY = 0;
           this.y = block.position.y - this.height;
           this.isMidAir = false;
+          this.isJumping = false; // Reset the flag
           return true;
         }
       }
@@ -110,6 +127,7 @@ class Player {
       if (this.collidesWith(block) && playerBottom <= block.position.y + 1) {
         this.y = block.position.y - this.height;
         this.isMidAir = false;
+        this.isJumping = false;
         return true;
       }
     }
@@ -153,22 +171,39 @@ class Player {
   }
 
   attack(opponent) {
-    if (gameOver) {
+    if (gameOver || this.isCooldownActive) {
       return;
     }
+    this.isAttacking = true;
+    // Add a timeout to reset the isAttacking flag
+    setTimeout(() => {
+      this.isAttacking = false;
+    }, 500);  // Set the time to match your attack animation duration
     if (this.hitboxCollidesWith(opponent)) {
+      let hitSound = hit1.cloneNode();
+      hitSound.play();
+  
       opponent.takeDamage(10);
+      this.isCooldownActive = true;
+      setTimeout(() => {
+        this.isCooldownActive = false;
+      }, this.cooldownTime);
       this.checkForGameOver();
     }
   }
+  
 
   takeDamage(damage) {
     this.health -= damage;
     this.health = Math.max(this.health, 0); // Ensure health doesn't go below 0
+    if (this.health === 0) {
+      this.isDead = true;
+    }
   }
-
+  
   checkForGameOver() {
     if (pinkMonster.health <= 0 || owlet.health <= 0) {
+      kill.play();
       // Determine winner based on health
       let winner =
         pinkMonster.health > owlet.health ? pinkMonster.id : owlet.id;
@@ -177,7 +212,7 @@ class Player {
       setTimeout(() => {
         drawMessage(winner);
         gameOver = true;
-      }, 1000);
+      }, 850);
     }
 
   }
@@ -214,19 +249,23 @@ class Player {
     return false; // Return false if no collision was found.
   }
 
-  addGravity() {
+  addGravity(deltaTime) {
     if (!this.isOnPlatform() && !this.isOnFloor()) {
-      this.velocityY += gravity;
+      this.velocityY += gravity * (deltaTime / 1000)
     }
   }
 
   drawPlayer() {
-    //TODO make a separate function chooseSprite
-    let spriteToUse = this.sprites.idle;
-
-    if (this.velocityX !== 0) {
-      spriteToUse = this.sprites.run;
-      //TODO if attacking and running, use that sprite, etc
+    let spriteToUse;
+    
+    if (this.isAttacking) {
+      spriteToUse = this.sprites.idle_attack;
+    } else if (this.isDead) {
+      spriteToUse = this.sprites.death;
+    } else if (this.isJumping) {
+      spriteToUse = this.sprites.jump;
+    } else {
+      spriteToUse = this.velocityX !== 0 ? this.sprites.run : this.sprites.idle;
     }
 
     let currentFrameX = this.currentFrame * this.spriteWidth;
@@ -280,21 +319,26 @@ class Player {
     ctx.restore(); // Restore the canvas to its previous state
   }
 
-  updateAnimation() {
-    let maxFrames = this.velocityX !== 0 ? 6 : 4;
-    // if (this.velocityY !== 0) {
-    //     maxFrames = 8;
-    // }
-    //TODO isDead animation with global isDead flag? Eller använd gameOver helt enkelt
-    //else if (gameOvver) {
-    //  maxFrames = 8;
-    //}
-
-    this.frameCounter++;
-    if (this.frameCounter >= animationSpeed) {
-      this.frameCounter = 0;
-      // Update the current frame
+  updateAnimation(deltaTime) {
+    let maxFrames;
+  
+    if (this.isAttacking) {
+      maxFrames = 6;
+    } else if (this.isDead) {
+      maxFrames = 8;
+    } else if (this.isJumping) {
+      maxFrames = 8;
+    } else {
+      maxFrames = this.velocityX !== 0 ? 6 : 4;
+    }
+  
+    this.frameCounter += deltaTime;
+  
+    const frameTime = animationSpeed;  // If animationSpeed is the time for one animation frame in ms
+  
+    if (this.frameCounter >= frameTime) {
+      this.frameCounter -= frameTime; // Substract frameTime, instead of setting it to 0
       this.currentFrame = (this.currentFrame + 1) % maxFrames;
     }
-  }
+  }  
 }
