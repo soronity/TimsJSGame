@@ -57,13 +57,13 @@ class Player {
       (options.a && options.a.pressed) ||
       (options.arrowLeft && options.arrowLeft.pressed)
     ) {
-      this.velocityX = -200;
+      this.velocityX = -350;
       this.direction = "left";
     } else if (
       (options.d && options.d.pressed) ||
       (options.arrowRight && options.arrowRight.pressed)
     ) {
-      this.velocityX = 200;
+      this.velocityX = 350;
       this.direction = "right";
     } else {
       this.velocityX = 0;

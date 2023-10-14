@@ -13,7 +13,7 @@ canvas.style.marginLeft = 'auto';
 canvas.style.marginRight = 'auto';
 
 const gravity = 800;
-const animationSpeed = 150;
+const animationSpeed = 120;
 
 let showInstructions = false; // Variable to toggle showing instructions
 let musicPlaying = false; // Variable to toggle music on and off
