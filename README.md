@@ -3,8 +3,7 @@ A bare-bones 2D fighter game on https://soronity.github.io/TimsJSGame/public/ind
 Bugs to fix:
 - Flickering player image
   
-Features to add:
-- React for the frontend
+Features to (possibly) add:
 - Scoreboard and system to keep track of a "best of <insert_number>" style game.
 - Projectile attacks
 
